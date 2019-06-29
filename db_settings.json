@@ -1,0 +1,15 @@
+{
+    "database": "icinga2",
+    "host": "localhost",
+    "port": 8086,
+    "username": "root",
+    "password": "root",
+    "ssl": false,
+    "verify_ssl": false,
+    "timeout": 60,
+    "retries": 3,
+    "use_udp": false,
+    "udp_port": 4444,
+    "proxies": {},
+    "path": ""
+  }
