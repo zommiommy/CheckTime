@@ -1,73 +1,97 @@
-#!./check_disk_venv/bin/python
+
 
 import sys
 import logging
 import argparse
 
-from analyze_data import analyze_data
-
-# Create a custom parser to ensure that the exit code on error is 1
-# and that the error messages are print on the stderr so that the 
-# stdout is only for sucessfull data analysis
+from predict_time import predict_time_left
 
 class MyParser(argparse.ArgumentParser):
+    """Custom parser to ensure that the exit code on error is 1
+        and that the error messages are printed on the stderr 
+        so that the stdout is only for sucessfull data analysis"""
     def error(self, message):
         sys.stderr.write('error: %s\n' % message)
         self.print_help(file=sys.stderr)
         sys.exit(1)
 
 
-# Define the possible settings
+class MainClass:
 
-parser = MyParser()
+    hirerarchy = {
+        "selectors":[],
+        "optional":"" 
+        "fields":[]
+        }
 
-query_settings_r = parser.add_argument_group('query settings (required)')
-query_settings_r.add_argument("-M", "--measurement",    help="measurement where the data will be queried.", type=str, required=True)
-query_settings_r.add_argument("-H", "--host",    help="host which disks will be checked.", type=str, required=True)
-query_settings_r.add_argument("-s", "--service", help="service to be checked.",            type=str, required=True)
+    def __init__(self):
+        # Define the possible settings
 
-query_settings_o = parser.add_argument_group('query settings (optional)')
-query_settings_o.add_argument("-m", "--metric", help="metric to be checked.", type=str, action="append", default=[])
-query_settings_o.add_argument("-e", "--exclude", help="metric to be excluded from the analysis.", type=str, action="append", default=[])
+        self.parser = MyParser()
 
-thresholds_settings = parser.add_argument_group('thresholds settings')
-thresholds_settings.add_argument("-n", "--window", help="the range of time to consider in the analysis.", type=str, required=True)
-thresholds_settings.add_argument("-w", "--warning-threshold", help="the time that if the predicted time is lower the script will exit(1).", type=str, required=True)
-thresholds_settings.add_argument("-c", "--critical-threshold", help="the time that if the predicted time is lower the script will exit(2).", type=str, required=True)
+        query_settings_r = self.parser.add_argument_group('query settings (required)')
+        query_settings_r.add_argument("-M", "--measurement",    help="measurement where the data will be queried.", type=str, required=True)
 
-verbosity_settings= parser.add_argument_group('verbosity settings (optional)')
-verbosity_settings.add_argument("-v", "--verbosity", help="set the logging verbosity, 0 == ERROR, 1 == DEBUG, it defaults to ERROR.",  type=int, choices=[0,1], default=0)
-args = parser.parse_args()
+        thresholds_settings = self.parser.add_argument_group('thresholds settings')
+        thresholds_settings.add_argument("-n", "--window", help="the range of time to consider in the analysis.", type=str, required=True)
+        thresholds_settings.add_argument("-w", "--warning-threshold", help="the time that if the predicted time is lower the script will exit(1).", type=str, required=True)
+        thresholds_settings.add_argument("-c", "--critical-threshold", help="the time that if the predicted time is lower the script will exit(2).", type=str, required=True)
 
-# Set the verbosity
+        verbosity_settings= self.parser.add_argument_group('verbosity settings (optional)')
+        verbosity_settings.add_argument("-v", "--verbosity", help="set the logging verbosity, 0 == ERROR, 1 == DEBUG, it defaults to ERROR.",  type=int, choices=[0,1], default=0)
+       
 
-if args.verbosity == 0:
-    logging.basicConfig(level=logging.ERROR)
-else:
-    logging.basicConfig(level=logging.DEBUG)
+    def set_verbosity(self):
+        if self.args.verbosity == 0:
+            logging.basicConfig(level=logging.ERROR)
+        else:
+            logging.basicConfig(level=logging.DEBUG)
 
-# Validate the settings
+    def validate_args(self):
+        if self.args.warning_threshold > self.args.critical_threshold:
+            logger.error("The warning time ({}) should be bigger than the critical time ({})\n".format(self.args.warning_threshold,self.args.critical_threshold))
+            os.exit(-1)
 
-if args.warning_threshold > args.critical_threshold:
-    logger.error("The warning time ({}) should be bigger than the critical time ({})\n".format(args.warning_threshold,args.critical_threshold))
-    os.exit(-1)
+    def get_data(self):
+        dg = DataGetter()
+        if not metric:
+            logger.debug("Retrieving all the metrics.")
+            metrics = dg.get_metrics(self.hirerarchy)
+        # Filter the metric that was passed with the  -e param
+        filtered_metrics = [m for m in metrics if m not in self.blacklist]
+        logger.debug("Predicting for the metrics [{}]".format(", ".join(filtered_metrics)))
+        return [dg.get_data(self.hirearachy, m) for m in filtered_metrics] 
 
 
-# Analyze the data
+    def get_blaklist(self):
+        raise  NotImplemnetedError("This metod is ment to be overwritten by subclasses")
 
-predicted_time = analyze_data(args.host, args.service, args.metric, args.exclude)
+    def predict(self):
+        raise  NotImplemnetedError("This metod is ment to be overwritten by subclasses")
 
-# Return the correct exit code
+    def _predict(self, x , y):
+        # This just save the need to import files on the two frontends
+        return predict_time_left(x, y)
 
-# Critical case
-if any(t < args.critical_threshold for t in predicted_time):
-    sys.exit(2)
-# Warning case
-elif any(t < args.warning_threshold for t in predicted_time):
-    sys.exit(1)
-# Metric no found
-elif any(t == None for t in predicted_time):
-    sys.exit(1)
-# Normal case
-else:
-    sys.exit(0)
+    def exit(self):
+        # Critical case
+        if any(t < self.args.critical_threshold for t in self.predicted_times):
+            sys.exit(2)
+        # Warning case
+        elif any(t < self.args.warning_threshold for t in self.predicted_times):
+            sys.exit(1)
+        # Metric no found
+        elif any(t == None for t in self.predicted_times):
+            sys.exit(1)
+        # Normal case
+        else:
+            sys.exit(0)
+
+    def run(self):
+        self.args = self.parser.parse_args()
+        self.get_blaklist()
+        self.set_verbosity()
+        self.validate_args()
+        self.data = self.get_data()
+        self.predicted_times = [self.predict(*data) for data in self.data]
+        self.exit()

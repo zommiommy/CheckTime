@@ -1,0 +1,3 @@
+#!/bin/bash
+DIR=$(dirname "$(realpath $0)")
+$DIR/check_time_venv/bin/python $DIR/src/main_win.py "$@"
