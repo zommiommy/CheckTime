@@ -1,0 +1,20 @@
+{
+  "build": "py37_0",
+  "build_number": 0,
+  "channel": "https://repo.anaconda.com/pkgs/main/linux-64",
+  "constrains": [],
+  "depends": [
+    "python >=3.7,<3.8.0a0"
+  ],
+  "features": "",
+  "fn": "certifi-2019.3.9-py37_0.tar.bz2",
+  "license": "ISC",
+  "md5": "28921b59b39bc66578303264677a5232",
+  "name": "certifi",
+  "size": 158568,
+  "subdir": "linux-64",
+  "timestamp": 1552318217480,
+  "track_features": "",
+  "url": "https://repo.anaconda.com/pkgs/main/linux-64/certifi-2019.3.9-py37_0.tar.bz2",
+  "version": "2019.3.9"
+}

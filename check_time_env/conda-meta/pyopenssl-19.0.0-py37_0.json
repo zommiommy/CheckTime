@@ -1,0 +1,52 @@
+{
+  "build": "py37_0",
+  "build_number": 0,
+  "channel": "https://repo.anaconda.com/pkgs/main/linux-64",
+  "constrains": [],
+  "depends": [
+    "cryptography >=2.2.1",
+    "python >=3.7,<3.8.0a0",
+    "six >=1.5.2"
+  ],
+  "features": "",
+  "files": [
+    "lib/python3.7/site-packages/OpenSSL/SSL.py",
+    "lib/python3.7/site-packages/OpenSSL/__init__.py",
+    "lib/python3.7/site-packages/OpenSSL/__pycache__/SSL.cpython-37.pyc",
+    "lib/python3.7/site-packages/OpenSSL/__pycache__/__init__.cpython-37.pyc",
+    "lib/python3.7/site-packages/OpenSSL/__pycache__/_util.cpython-37.pyc",
+    "lib/python3.7/site-packages/OpenSSL/__pycache__/crypto.cpython-37.pyc",
+    "lib/python3.7/site-packages/OpenSSL/__pycache__/debug.cpython-37.pyc",
+    "lib/python3.7/site-packages/OpenSSL/__pycache__/rand.cpython-37.pyc",
+    "lib/python3.7/site-packages/OpenSSL/__pycache__/tsafe.cpython-37.pyc",
+    "lib/python3.7/site-packages/OpenSSL/__pycache__/version.cpython-37.pyc",
+    "lib/python3.7/site-packages/OpenSSL/_util.py",
+    "lib/python3.7/site-packages/OpenSSL/crypto.py",
+    "lib/python3.7/site-packages/OpenSSL/debug.py",
+    "lib/python3.7/site-packages/OpenSSL/rand.py",
+    "lib/python3.7/site-packages/OpenSSL/tsafe.py",
+    "lib/python3.7/site-packages/OpenSSL/version.py",
+    "lib/python3.7/site-packages/pyOpenSSL-19.0.0-py3.7.egg-info/PKG-INFO",
+    "lib/python3.7/site-packages/pyOpenSSL-19.0.0-py3.7.egg-info/SOURCES.txt",
+    "lib/python3.7/site-packages/pyOpenSSL-19.0.0-py3.7.egg-info/dependency_links.txt",
+    "lib/python3.7/site-packages/pyOpenSSL-19.0.0-py3.7.egg-info/installed-files.txt",
+    "lib/python3.7/site-packages/pyOpenSSL-19.0.0-py3.7.egg-info/requires.txt",
+    "lib/python3.7/site-packages/pyOpenSSL-19.0.0-py3.7.egg-info/top_level.txt"
+  ],
+  "fn": "pyopenssl-19.0.0-py37_0.tar.bz2",
+  "installed_by": "Miniconda3-4.6.14-Linux-x86_64.sh",
+  "license": "Apache 2.0",
+  "license_family": "Apache",
+  "link": {
+    "source": "/home/zommiommy/Github/CheckTime/miniconda3/pkgs/pyopenssl-19.0.0-py37_0",
+    "type": "hard-link"
+  },
+  "md5": "0bd4b0d483870a0e53066b4833ec57bf",
+  "name": "pyopenssl",
+  "size": 83770,
+  "subdir": "linux-64",
+  "timestamp": 1549320564648,
+  "track_features": "",
+  "url": "https://repo.anaconda.com/pkgs/main/linux-64/pyopenssl-19.0.0-py37_0.tar.bz2",
+  "version": "19.0.0"
+}

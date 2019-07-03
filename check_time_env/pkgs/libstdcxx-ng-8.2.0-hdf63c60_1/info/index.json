@@ -1,0 +1,12 @@
+{
+  "arch": "x86_64",
+  "build": "hdf63c60_1",
+  "build_number": 1,
+  "depends": [],
+  "license": "GPL3 with runtime exception",
+  "name": "libstdcxx-ng",
+  "platform": "linux",
+  "subdir": "linux-64",
+  "timestamp": 1534516131602,
+  "version": "8.2.0"
+}

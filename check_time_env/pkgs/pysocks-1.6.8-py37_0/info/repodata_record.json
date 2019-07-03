@@ -1,0 +1,21 @@
+{
+  "build": "py37_0",
+  "build_number": 0,
+  "channel": "https://repo.anaconda.com/pkgs/main/linux-64",
+  "constrains": [],
+  "depends": [
+    "python >=3.7,<3.8.0a0"
+  ],
+  "features": "",
+  "fn": "pysocks-1.6.8-py37_0.tar.bz2",
+  "license": "BSD 3-Clause",
+  "license_family": "BSD",
+  "md5": "de454ecc067eb29b75f290018a2a4563",
+  "name": "pysocks",
+  "size": 22908,
+  "subdir": "linux-64",
+  "timestamp": 1530733440464,
+  "track_features": "",
+  "url": "https://repo.anaconda.com/pkgs/main/linux-64/pysocks-1.6.8-py37_0.tar.bz2",
+  "version": "1.6.8"
+}

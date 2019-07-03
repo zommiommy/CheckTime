@@ -1,0 +1,21 @@
+{
+  "build": "h7b6447c_5",
+  "build_number": 5,
+  "channel": "https://repo.anaconda.com/pkgs/main/linux-64",
+  "constrains": [],
+  "depends": [
+    "libgcc-ng >=7.3.0",
+    "ncurses >=6.1,<7.0a0"
+  ],
+  "features": "",
+  "fn": "readline-7.0-h7b6447c_5.tar.bz2",
+  "license": "GPL-3.0",
+  "md5": "44547de0c0be291132a3fdd18829f5ff",
+  "name": "readline",
+  "size": 401325,
+  "subdir": "linux-64",
+  "timestamp": 1535475436442,
+  "track_features": "",
+  "url": "https://repo.anaconda.com/pkgs/main/linux-64/readline-7.0-h7b6447c_5.tar.bz2",
+  "version": "7.0"
+}

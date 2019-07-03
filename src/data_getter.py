@@ -12,8 +12,10 @@ logger = logging.getLogger(__name__)
 class DataGetter:
     setting_file = "/db_settings.json"
 
-    def __init__(self):
+    def __init__(self, query):
         """Load the settings file and connect to the DB"""
+        self.query = query
+
         # Get the current folder
         current_script_dir = "/".join(__file__.split("/")[:-1])
         
@@ -57,51 +59,39 @@ class DataGetter:
 
     def get_measurements(self) -> List[str]:
         """Get all the measurements sul DB"""
-        query = """SHOW MEASUREMENTS"""
-        logger.debug("Executing query [%s]"%query)
-        r = self.exec_query(query)
-        return [x["name"] for x in r]
-
+        return [x["name"] for x in self.exec_query("""SHOW MEASUREMENTS""")]
 
     def get_available(self, name : str):
+        """For a field it returns all the distinct values once the filter is applied
+         to the previous fields in order of insertion in the dictionary"""
         if name == "measurements":
             return self.get_measurements()
-
+        index = list(self.query["selectors"].keys()).index(name)
+        selectors_before_name = dict(list(self.query["selectors"].items())[:index])
+        return self.get_distinct_values(name, selectors_before_name)
 
     def check_existance(self, name : str, value : str):
-        available = self.get_available()
+        available = self.get_available(name)
         if value not in available:
             logger.error("The {name} [{value}] do not exist. The available one are [{available}]".format(**locals()))
             self.__del__()
             sys.exit(1)
 
-    def get_data(self, measurement : str, host : str, service : str, metric : str) -> Tuple[np.ndarray, np.ndarray]:
+    def get_data(self) -> Tuple[np.ndarray, np.ndarray]:
         """Read the data from the DB and return it as (x, y) where x is the time and y is the percentual disk usage"""
         
-        measurements = self.get_measurements()
-        if measurement not in measurements:
-            logger.error("The measurment [{measurement}] do not exist. The available one are [{measurements}]".format(**locals()))
-            sys.exit(1)
+        self.check_existance("measurements", self.query["measurements"])
 
-        hosts = self.get_hosts(measurement)
-        if host not in hosts:
-            logger.error("The host [{host}] do not exist. The available one are [{hosts}]".format(**locals()))
-            sys.exit(1)
+        for name, value in self.query["selectors"].items():
+            self.check_existance(name, value)
 
-        services = self.get_services(measurement, host)
-        if service not in services:
-            logger.error("The service [{service}] do not exist. The available one are [{services}]".format(**locals()))
-            sys.exit(1)
 
-        metrics = self.get_metrics(measurement, host, service)
+        metrics = self.get_metrics()
+        name = next(self.query["optional"].keys())
         if metric not in metrics:
-            logger.error("The metric [{metric}] do not exist. The available one are [{metrics}]".format(**locals()))
+            logger.error("The {name} [{metric}] do not exist. The available one are [{metrics}]".format(**locals()))
             return None
 
-
-        query = """SELECT  FROM "{measurement}" {where})""".format(**locals())
-        # Execute the query and return the unique results
-        r = self.exec_query(query)
-
-
-        return (0,0)
+        fields = ", ".join(self.query["fields"])
+        query = """SELECT {fields} FROM "{measurement}" {where})""".format(**locals())
+        return self.exec_query(query)

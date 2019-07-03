@@ -1,0 +1,80 @@
+# This file created by conda-build 3.16.2
+# meta.yaml template originally from:
+# /tmp/build/80754af9/rsync-recipes/urllib3-1.24.1-python_3.7-on-linux_64, last modified Mon Nov  5 16:24:54 2018
+# ------------------------------------------------
+
+package:
+    name: urllib3
+    version: 1.24.1
+source:
+    sha256: de9529817c93f27c8ccbfead6985011db27bd0ddfcdb2d86f3f663385c6a9c22
+    url: https://pypi.io/packages/source/u/urllib3/urllib3-1.24.1.tar.gz
+build:
+    number: '0'
+    script: /tmp/build/80754af9/urllib3_1541444033075/_h_env_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placehold_placeh/bin/python
+        -m pip install . --no-deps --ignore-installed --no-cache-dir -vvv
+    string: py37_0
+requirements:
+    host:
+        - ca-certificates 2018.03.07 0
+        - certifi 2018.10.15 py37_0
+        - libedit 3.1.20170329 h6b74fdf_2
+        - libffi 3.2.1 hd88cf55_4
+        - libgcc-ng 8.2.0 hdf63c60_1
+        - libstdcxx-ng 8.2.0 hdf63c60_1
+        - ncurses 6.1 hf484d3e_0
+        - openssl 1.1.1 h7b6447c_0
+        - pip 18.1 py37_0
+        - python 3.7.1 h0371630_3
+        - readline 7.0 h7b6447c_5
+        - setuptools 40.5.0 py37_0
+        - sqlite 3.25.2 h7b6447c_0
+        - tk 8.6.8 hbc83047_0
+        - wheel 0.32.2 py37_0
+        - xz 5.2.4 h14c3975_4
+        - zlib 1.2.11 ha838bed_2
+    run:
+        - certifi
+        - cryptography >=1.3.4
+        - idna >=2.0.0
+        - pyopenssl >=0.14
+        - pysocks >=1.5.6,<2.0,!=1.5.7
+        - python >=3.7,<3.8.0a0
+test:
+    imports:
+        - urllib3
+        - urllib3.contrib
+        - urllib3.packages
+        - urllib3.packages.backports
+        - urllib3.packages.ssl_match_hostname
+        - urllib3.util
+about:
+    description: 'urllib3 is a powerful, sanity-friendly HTTP client for Python. Much
+        of the
+
+        Python ecosystem already uses urllib3. urllib3 brings many critical features
+
+        that are missing from the Python standard libraries, such as thread safety,
+
+        connection pooling, client side ssl/tls verification, support for gzip and
+
+        deflate encodings, HTTP and SOCKS proxy support, helpers for retrying requests
+
+        and dealing with HTTP redirects.
+
+        '
+    dev_url: https://github.com/shazow/urllib3
+    doc_source_url: https://github.com/shazow/urllib3/tree/master/docs
+    doc_url: https://urllib3.readthedocs.io/
+    home: https://urllib3.readthedocs.io/
+    license: MIT
+    license_family: MIT
+    license_file: LICENSE.txt
+    summary: HTTP library with thread-safe connection pooling, file post, and more.
+extra:
+    copy_test_source_files: true
+    final: true
+    recipe-maintainers:
+        - ocefpaf
+        - pmlandwehr
+        - sigmavirus24

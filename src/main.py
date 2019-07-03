@@ -18,12 +18,6 @@ class MyParser(argparse.ArgumentParser):
 
 class MainClass:
 
-    hirerarchy = {
-        "selectors":[],
-        "optional":"" 
-        "fields":[]
-        }
-
     def __init__(self):
         # Define the possible settings
 
@@ -53,17 +47,16 @@ class MainClass:
             os.exit(-1)
 
     def get_data(self):
-        dg = DataGetter()
-        if not metric:
-            logger.debug("Retrieving all the metrics.")
-            metrics = dg.get_metrics(self.hirerarchy)
+        dg = DataGetter(self.query)
+        metrics = next(self.query["optionals"].values())
+        if not metrics:
+            metrics = dg.get_metrics()
         # Filter the metric that was passed with the  -e param
-        filtered_metrics = [m for m in metrics if m not in self.blacklist]
+        filtered_metrics = [m for m in metrics if m not in self.query["blacklist"]]
         logger.debug("Predicting for the metrics [{}]".format(", ".join(filtered_metrics)))
-        return [dg.get_data(self.hirearachy, m) for m in filtered_metrics] 
+        return [dg.get_data(m) for m in filtered_metrics] 
 
-
-    def get_blaklist(self):
+    def construct_query(self):
         raise  NotImplemnetedError("This metod is ment to be overwritten by subclasses")
 
     def predict(self):
@@ -89,9 +82,9 @@ class MainClass:
 
     def run(self):
         self.args = self.parser.parse_args()
-        self.get_blaklist()
         self.set_verbosity()
         self.validate_args()
+        self.query = self.construct_query()
         self.data = self.get_data()
         self.predicted_times = [self.predict(*data) for data in self.data]
         self.exit()

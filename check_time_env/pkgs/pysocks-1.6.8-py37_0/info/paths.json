@@ -1,0 +1,53 @@
+{
+  "paths": [
+    {
+      "_path": "lib/python3.7/site-packages/PySocks-1.6.8-py3.7.egg-info/PKG-INFO",
+      "path_type": "hardlink",
+      "sha256": "0b2ea1f1d0d4efdb817ae25e9e6c0246230bf7aab0c3056403711e930e83a197",
+      "size_in_bytes": 470
+    },
+    {
+      "_path": "lib/python3.7/site-packages/PySocks-1.6.8-py3.7.egg-info/SOURCES.txt",
+      "path_type": "hardlink",
+      "sha256": "2700fd398d87ef9b4a3c7f9bd281c12975e7ffb7199ca96417ced7cb08779eba",
+      "size_in_bytes": 288
+    },
+    {
+      "_path": "lib/python3.7/site-packages/PySocks-1.6.8-py3.7.egg-info/dependency_links.txt",
+      "path_type": "hardlink",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "size_in_bytes": 1
+    },
+    {
+      "_path": "lib/python3.7/site-packages/PySocks-1.6.8-py3.7.egg-info/top_level.txt",
+      "path_type": "hardlink",
+      "sha256": "4ca48e21f0850682bd118f050586d8a82dcf59ddfef86d79a61f67f3e4073c39",
+      "size_in_bytes": 19
+    },
+    {
+      "_path": "lib/python3.7/site-packages/__pycache__/socks.cpython-37.pyc",
+      "path_type": "hardlink",
+      "sha256": "66c75706775b55f3572f0da61594ab2f8878ff91371217c4250ea5ab225462bf",
+      "size_in_bytes": 23064
+    },
+    {
+      "_path": "lib/python3.7/site-packages/__pycache__/sockshandler.cpython-37.pyc",
+      "path_type": "hardlink",
+      "sha256": "bc3c55d182884fea130be2055212d4c584c32e1a8b15029b525782bf240a795a",
+      "size_in_bytes": 3695
+    },
+    {
+      "_path": "lib/python3.7/site-packages/socks.py",
+      "path_type": "hardlink",
+      "sha256": "c2857917ed2fb105f1cfead085cd2fd5302ca20da9c9acf6ecbfb25bca22b15a",
+      "size_in_bytes": 32281
+    },
+    {
+      "_path": "lib/python3.7/site-packages/sockshandler.py",
+      "path_type": "hardlink",
+      "sha256": "10dc1450edefb7ce3fd7244702ad40d78ed32ff4c0b85bb1dadff542f355d95a",
+      "size_in_bytes": 2913
+    }
+  ],
+  "paths_version": 1
+}

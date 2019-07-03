@@ -1,0 +1,35 @@
+{
+  "build": "py37_0",
+  "build_number": 0,
+  "channel": "https://repo.anaconda.com/pkgs/main/linux-64",
+  "constrains": [],
+  "depends": [
+    "python >=3.7,<3.8.0a0"
+  ],
+  "features": "",
+  "files": [
+    "lib/python3.7/site-packages/certifi-2019.03.09-py3.7.egg-info",
+    "lib/python3.7/site-packages/certifi/__init__.py",
+    "lib/python3.7/site-packages/certifi/__main__.py",
+    "lib/python3.7/site-packages/certifi/__pycache__/__init__.cpython-37.pyc",
+    "lib/python3.7/site-packages/certifi/__pycache__/__main__.cpython-37.pyc",
+    "lib/python3.7/site-packages/certifi/__pycache__/core.cpython-37.pyc",
+    "lib/python3.7/site-packages/certifi/cacert.pem",
+    "lib/python3.7/site-packages/certifi/core.py"
+  ],
+  "fn": "certifi-2019.3.9-py37_0.tar.bz2",
+  "installed_by": "Miniconda3-4.6.14-Linux-x86_64.sh",
+  "license": "ISC",
+  "link": {
+    "source": "/home/zommiommy/Github/CheckTime/miniconda3/pkgs/certifi-2019.3.9-py37_0",
+    "type": "hard-link"
+  },
+  "md5": "28921b59b39bc66578303264677a5232",
+  "name": "certifi",
+  "size": 158568,
+  "subdir": "linux-64",
+  "timestamp": 1552318217480,
+  "track_features": "",
+  "url": "https://repo.anaconda.com/pkgs/main/linux-64/certifi-2019.3.9-py37_0.tar.bz2",
+  "version": "2019.3.9"
+}

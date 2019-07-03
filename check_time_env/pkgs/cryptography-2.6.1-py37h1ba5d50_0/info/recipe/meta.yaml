@@ -1,0 +1,110 @@
+# This file created by conda-build 3.17.8
+# meta.yaml template originally from:
+# /tmp/build/80754af9/rsync-recipes/cryptography-2.6.1-python_3.7-on-linux_64, last modified Mon Mar 11 15:39:05 2019
+# ------------------------------------------------
+
+package:
+    name: cryptography
+    version: 2.6.1
+source:
+    patches:
+        - 0001-Skip-macOS-test-for-getentropy.patch
+    sha256: 26c821cbeb683facb966045e2064303029d572a87ee69ca5a1bf54bf55f93ca6
+    url: https://pypi.io/packages/source/c/cryptography/cryptography-2.6.1.tar.gz
+build:
+    number: '0'
+    script:
+        - python -m pip install --no-deps --ignore-installed . -vv
+    string: py37h1ba5d50_0
+requirements:
+    build:
+        - binutils_impl_linux-64 2.31.1 h6176602_1
+        - binutils_linux-64 2.31.1 h6176602_6
+        - gcc_impl_linux-64 7.3.0 habb00fd_1
+        - gcc_linux-64 7.3.0 h553295d_6
+        - libgcc-ng 8.2.0 hdf63c60_1
+        - libstdcxx-ng 8.2.0 hdf63c60_1
+    host:
+        - ca-certificates 2019.1.23 0
+        - certifi 2018.11.29 py37_0
+        - cffi 1.12.1 py37h2e261b9_0
+        - libedit 3.1.20181209 hc058e9b_0
+        - libffi 3.2.1 hd88cf55_4
+        - libgcc-ng 8.2.0 hdf63c60_1
+        - libstdcxx-ng 8.2.0 hdf63c60_1
+        - ncurses 6.1 he6710b0_1
+        - openssl 1.1.1b h7b6447c_1
+        - pip 19.0.3 py37_0
+        - pycparser 2.19 py37_0
+        - python 3.7.2 h0371630_0
+        - readline 7.0 h7b6447c_5
+        - setuptools 40.8.0 py37_0
+        - sqlite 3.26.0 h7b6447c_0
+        - tk 8.6.8 hbc83047_0
+        - wheel 0.33.1 py37_0
+        - xz 5.2.4 h14c3975_4
+        - zlib 1.2.11 h7b6447c_3
+    run:
+        - asn1crypto >=0.21.0
+        - cffi >=1.7
+        - idna >=2.1
+        - libgcc-ng >=7.3.0
+        - openssl >=1.1.1b,<1.1.2a
+        - python >=3.7,<3.8.0a0
+        - six >=1.4.1
+test:
+    commands:
+        - pytest
+    imports:
+        - cryptography
+        - cryptography.fernet
+        - cryptography.hazmat
+        - cryptography.hazmat.backends
+        - cryptography.hazmat.backends.openssl
+        - cryptography.hazmat.bindings
+        - cryptography.hazmat.bindings.openssl
+        - cryptography.hazmat.primitives
+        - cryptography.hazmat.primitives.asymmetric
+        - cryptography.hazmat.primitives.ciphers
+        - cryptography.hazmat.primitives.kdf
+        - cryptography.hazmat.primitives.twofactor
+        - cryptography.x509
+        - cryptography.x509.certificate_transparency
+    requires:
+        - cryptography-vectors 2.6.1.*
+        - hypothesis >=1.11.4
+        - iso8601
+        - pretend
+        - pytest >=3.2.1,!=3.3.0
+        - pytz
+    source_files:
+        - tests
+about:
+    description: 'Cryptography is a package which provides cryptographic recipes and
+
+        primitives to Python developers. Our goal is for it to be your
+
+        "cryptographic standard library". It supports Python 2.6-2.7, Python 3.3+,
+
+        and PyPy 2.6+. Cryptography includes both high level recipes, and low level
+
+        interfaces to common cryptographic algorithms such as symmetric ciphers,
+
+        message digests and key derivation functions.
+
+        '
+    dev_url: https://github.com/pyca/cryptography
+    doc_source_url: https://github.com/pyca/cryptography/tree/master/docs
+    doc_url: http://cryptography.readthedocs.io/
+    home: https://github.com/pyca/cryptography
+    license: Apache 2.0 or BSD 3-Clause, PSF 2
+    license_family: BSD
+    license_file: LICENSE
+    summary: Provides cryptographic recipes and primitives to Python developers
+extra:
+    copy_test_source_files: true
+    final: true
+    recipe-maintainers:
+        - jakirkham
+        - jschueller
+        - ocefpaf

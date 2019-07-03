@@ -1,0 +1,18 @@
+{
+  "build": "hdf63c60_1",
+  "build_number": 1,
+  "channel": "https://repo.anaconda.com/pkgs/main/linux-64",
+  "constrains": [],
+  "depends": [],
+  "features": "",
+  "fn": "libgcc-ng-8.2.0-hdf63c60_1.tar.bz2",
+  "license": "GPL",
+  "md5": "7d17c0d663e285a5e6cd7bfa8eed1cd8",
+  "name": "libgcc-ng",
+  "size": 7996349,
+  "subdir": "linux-64",
+  "timestamp": 1534516107109,
+  "track_features": "",
+  "url": "https://repo.anaconda.com/pkgs/main/linux-64/libgcc-ng-8.2.0-hdf63c60_1.tar.bz2",
+  "version": "8.2.0"
+}

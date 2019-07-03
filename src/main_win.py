@@ -1,11 +1,6 @@
 from main import MainClass
 
 class WinScript(MainClass):
-    hirerarchy = {
-        "selectors":["host", "service"],
-        "optional":"matric" 
-        "fields":["value", "max"]
-        }
 
     def __init__(self):
         super(WinScript, self).__init__()
@@ -16,9 +11,20 @@ class WinScript(MainClass):
         self.os_depenat_optional.add_argument("-m", "--metric", help="metric to be checked.", type=str, action="append", default=[])
         self.os_depenat_optional.add_argument("-e", "--exclude", help="metric to be excluded from the analysis.", type=str, action="append", default=[])
 
-    def get_blaklist(self):
-        self.blacklist = self.args.exclude
-    
+    def construct_query(self):
+        return {
+            "measurement":self.args.measurement,
+            "selectors":{
+                "host":self.args.host,
+                "service":self.args.service
+                },
+            "optional":{
+                "matric":self.args.metric
+                }, 
+            "blacklist":self.args.exclude,
+            "fields":["time", "value", "max"]
+        }
+
     def predict(self):
         x = self.data.get("time")
         y = self.data.get("value") / self.data.get("max") 

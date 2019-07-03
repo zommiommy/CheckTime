@@ -1,0 +1,20 @@
+{
+  "build": "had09818_2",
+  "build_number": 2,
+  "channel": "https://repo.anaconda.com/pkgs/main/linux-64",
+  "constrains": [],
+  "depends": [
+    "libgcc-ng >=7.2.0"
+  ],
+  "features": "",
+  "fn": "yaml-0.1.7-had09818_2.tar.bz2",
+  "license": "MIT",
+  "md5": "8bc3d68df049640c74941c52156a2e7a",
+  "name": "yaml",
+  "size": 87051,
+  "subdir": "linux-64",
+  "timestamp": 1510609996778,
+  "track_features": "",
+  "url": "https://repo.anaconda.com/pkgs/main/linux-64/yaml-0.1.7-had09818_2.tar.bz2",
+  "version": "0.1.7"
+}

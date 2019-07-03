@@ -1,0 +1,21 @@
+{
+  "build": "he6710b0_1",
+  "build_number": 1,
+  "channel": "https://repo.anaconda.com/pkgs/main/linux-64",
+  "constrains": [],
+  "depends": [
+    "libgcc-ng >=7.3.0",
+    "libstdcxx-ng >=7.3.0"
+  ],
+  "features": "",
+  "fn": "ncurses-6.1-he6710b0_1.tar.bz2",
+  "license": "Free software (MIT-like)",
+  "md5": "f8a5abbf28b624eb2c8bbc9f70a6ff70",
+  "name": "ncurses",
+  "size": 980597,
+  "subdir": "linux-64",
+  "timestamp": 1543442069203,
+  "track_features": "",
+  "url": "https://repo.anaconda.com/pkgs/main/linux-64/ncurses-6.1-he6710b0_1.tar.bz2",
+  "version": "6.1"
+}

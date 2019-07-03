@@ -1,0 +1,18 @@
+{
+  "build": "hdf63c60_1",
+  "build_number": 1,
+  "channel": "https://repo.anaconda.com/pkgs/main/linux-64",
+  "constrains": [],
+  "depends": [],
+  "features": "",
+  "fn": "libstdcxx-ng-8.2.0-hdf63c60_1.tar.bz2",
+  "license": "GPL3 with runtime exception",
+  "md5": "16e7bf6ac5207cc989841be16938a3cf",
+  "name": "libstdcxx-ng",
+  "size": 3058753,
+  "subdir": "linux-64",
+  "timestamp": 1534516131602,
+  "track_features": "",
+  "url": "https://repo.anaconda.com/pkgs/main/linux-64/libstdcxx-ng-8.2.0-hdf63c60_1.tar.bz2",
+  "version": "8.2.0"
+}

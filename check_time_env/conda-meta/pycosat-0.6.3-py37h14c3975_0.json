@@ -1,0 +1,32 @@
+{
+  "build": "py37h14c3975_0",
+  "build_number": 0,
+  "channel": "https://repo.anaconda.com/pkgs/main/linux-64",
+  "constrains": [],
+  "depends": [
+    "libgcc-ng >=7.2.0",
+    "python >=3.7,<3.8.0a0"
+  ],
+  "features": "",
+  "files": [
+    "lib/python3.7/site-packages/__pycache__/test_pycosat.cpython-37.pyc",
+    "lib/python3.7/site-packages/pycosat-0.6.3-py3.7.egg-info",
+    "lib/python3.7/site-packages/pycosat.cpython-37m-x86_64-linux-gnu.so",
+    "lib/python3.7/site-packages/test_pycosat.py"
+  ],
+  "fn": "pycosat-0.6.3-py37h14c3975_0.tar.bz2",
+  "installed_by": "Miniconda3-4.6.14-Linux-x86_64.sh",
+  "license": "MIT",
+  "link": {
+    "source": "/home/zommiommy/Github/CheckTime/miniconda3/pkgs/pycosat-0.6.3-py37h14c3975_0",
+    "type": "hard-link"
+  },
+  "md5": "2011c86dd3774e1853cca627f4495f0e",
+  "name": "pycosat",
+  "size": 107368,
+  "subdir": "linux-64",
+  "timestamp": 1530812793022,
+  "track_features": "",
+  "url": "https://repo.anaconda.com/pkgs/main/linux-64/pycosat-0.6.3-py37h14c3975_0.tar.bz2",
+  "version": "0.6.3"
+}

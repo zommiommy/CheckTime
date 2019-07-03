@@ -1,0 +1,35 @@
+{
+  "build": "h7b6447c_3",
+  "build_number": 3,
+  "channel": "https://repo.anaconda.com/pkgs/main/linux-64",
+  "constrains": [],
+  "depends": [
+    "libgcc-ng >=7.3.0"
+  ],
+  "features": "",
+  "files": [
+    "include/zconf.h",
+    "include/zlib.h",
+    "lib/libz.a",
+    "lib/libz.so",
+    "lib/libz.so.1",
+    "lib/libz.so.1.2.11",
+    "lib/pkgconfig/zlib.pc"
+  ],
+  "fn": "zlib-1.2.11-h7b6447c_3.tar.bz2",
+  "installed_by": "Miniconda3-4.6.14-Linux-x86_64.sh",
+  "license": "zlib",
+  "license_family": "Other",
+  "link": {
+    "source": "/home/zommiommy/Github/CheckTime/miniconda3/pkgs/zlib-1.2.11-h7b6447c_3",
+    "type": "hard-link"
+  },
+  "md5": "e76217678961a4836e1067a2d11603e2",
+  "name": "zlib",
+  "size": 122469,
+  "subdir": "linux-64",
+  "timestamp": 1542814864621,
+  "track_features": "",
+  "url": "https://repo.anaconda.com/pkgs/main/linux-64/zlib-1.2.11-h7b6447c_3.tar.bz2",
+  "version": "1.2.11"
+}

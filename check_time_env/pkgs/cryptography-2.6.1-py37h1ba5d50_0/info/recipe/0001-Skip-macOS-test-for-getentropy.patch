@@ -1,0 +1,25 @@
+diff --git a/tests/hazmat/backends/test_openssl.py b/tests/hazmat/backends/test_openssl.py
+index 0aa72d8..d29b84c 100644
+--- a/tests/hazmat/backends/test_openssl.py
++++ b/tests/hazmat/backends/test_openssl.py
+@@ -271,12 +271,14 @@ class TestOpenSSLRandomEngine(object):
+                         'getrandom']
+         if sys.platform.startswith('linux'):
+             assert name in ['getrandom', '/dev/urandom']
+-        if sys.platform == 'darwin':
+-            # macOS 10.12+ supports getentropy
+-            if parse_version(os.uname()[2]) >= parse_version("16.0"):
+-                assert name == 'getentropy'
+-            else:
+-                assert name == '/dev/urandom'
++# This has been causing our tests to fail for ages:
++# https://github.com/pyca/cryptography/issues/4110
++#        if sys.platform == 'darwin':
++#            # macOS 10.12+ supports getentropy
++#            if parse_version(os.uname()[2]) >= parse_version("16.0"):
++#                assert name == 'getentropy'
++#            else:
++#                assert name == '/dev/urandom'
+         if sys.platform == 'win32':
+             assert name == 'CryptGenRandom'
+ 

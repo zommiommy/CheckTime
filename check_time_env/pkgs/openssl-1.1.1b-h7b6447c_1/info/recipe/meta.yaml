@@ -1,0 +1,60 @@
+# This file created by conda-build 3.17.8
+# meta.yaml template originally from:
+# /tmp/build/80754af9/rsync-recipes/openssl-1.1.1b-on-linux_64, last modified Thu Mar  7 15:37:32 2019
+# ------------------------------------------------
+
+package:
+    name: openssl
+    version: 1.1.1b
+source:
+    fn: openssl-1.1.1b.tar.gz
+    sha256: 5c557b023230413dfb0756f3137a13e6d726838ccd1430888ad15bfb2b43ea4b
+    url: http://www.openssl.org/source/openssl-1.1.1b.tar.gz
+build:
+    has_prefix_files:
+        - bin/c_rehash
+        - lib/pkgconfig/libcrypto.pc
+        - lib/pkgconfig/libssl.pc
+        - lib/pkgconfig/openssl.pc
+    no_link: lib/libcrypto.so.1.1
+    number: '1'
+    run_exports:
+        - openssl >=1.1.1b,<1.1.2a
+    string: h7b6447c_1
+requirements:
+    build:
+        - binutils_impl_linux-64 2.31.1 h6176602_1
+        - binutils_linux-64 2.31.1 h6176602_6
+        - gcc_impl_linux-64 7.3.0 habb00fd_1
+        - gcc_linux-64 7.3.0 h553295d_6
+        - libgcc-ng 8.2.0 hdf63c60_1
+        - libstdcxx-ng 8.2.0 hdf63c60_1
+        - make 4.2.1 h1bed415_1
+    host:
+        - libgcc-ng 8.2.0 hdf63c60_1
+        - perl 5.26.2 h14c3975_0
+    run:
+        - ca-certificates
+        - libgcc-ng >=7.3.0
+test:
+    commands:
+        - touch checksum.txt
+        - openssl sha256 checksum.txt
+about:
+    dev_url: https://github.com/openssl/openssl
+    doc_url: https://www.openssl.org/docs/man1.1.1/
+    home: http://www.openssl.org/
+    license: OpenSSL
+    license_family: Apache
+    license_file: LICENSE
+    summary: OpenSSL is an open-source implementation of the SSL and TLS protocols
+extra:
+    copy_test_source_files: true
+    final: true
+    recipe-maintainers:
+        - carlodri
+        - jakirkham
+        - jjhelmus
+        - msarahan
+        - ocefpaf
+        - pelson

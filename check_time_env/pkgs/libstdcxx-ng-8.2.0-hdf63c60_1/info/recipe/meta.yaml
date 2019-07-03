@@ -1,0 +1,22 @@
+# This file created by conda-build 3.12.1+1.ge55acb4.dirty
+# ------------------------------------------------
+
+package:
+    name: libstdcxx-ng
+    version: 8.2.0
+source:
+    path: .
+build:
+    binary_relocation: false
+    detect_binary_files_with_prefix: false
+    missing_dso_whitelist:
+        - '*'
+    number: 1
+    string: hdf63c60_1
+about:
+    home: https://gcc.gnu.org/
+    license: GPL3 with runtime exception
+    summary: The GNU C++ Runtime Library
+extra:
+    copy_test_source_files: true
+    final: true
