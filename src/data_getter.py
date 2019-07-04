@@ -138,8 +138,10 @@ class DataGetter:
         if not self.validate_query():
             return None
 
-        fields = ", ".join(self.query["fields"])
+        fields = ", ".join(self.query["fields"] + self.query["optionals"])
         where = self.construct_selection({**self.query["selectors"], **self.query["optionals"]})
         time = self.query["time"]
-        query = """SELECT {fields} FROM "{measurement}" {where} {time})""".format(**locals())
-        return transpose(self.exec_query(query))
+        # Do the query and filter only the useful fields
+        query = """SELECT {fields} FROM (SELECT * FROM "{measurement}" {where} {time})""".format(**locals())
+        results = transpose(self.exec_query(query))
+        return results

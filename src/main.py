@@ -64,7 +64,7 @@ class MainClass:
         dg = DataGetter(self.query)
         self.render_optionals(dg)
         last_optional = list(self.query["optionals"].values())[-1]
-        return [dg.get_data(m) for m in last_optional] 
+        return {m : dg.get_data(m) for m in last_optional}
 
     def construct_query(self):
         raise  NotImplemnetedError("This metod is ment to be overwritten by subclasses")
@@ -72,9 +72,9 @@ class MainClass:
     def predict(self):
         raise  NotImplemnetedError("This metod is ment to be overwritten by subclasses")
 
-    def _predict(self, x , y):
+    def _predict(self, x, y, name):
         # This just save the need to import files on the two frontends
-        return predict_time_left(x, y)
+        return predict_time_left(x, y, name)
 
     def add_time_to_query(self):
         """ Add the time selector to the query json"""
@@ -102,5 +102,5 @@ class MainClass:
         self.query = self.construct_query()
         self.add_time_to_query()
         self.data = self.get_data()
-        self.predicted_times = [self.predict(*data) for data in self.data]
+        self.predicted_times = [self.predict(data) for data in self.data]
         self.exit()

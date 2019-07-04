@@ -1,3 +1,6 @@
+
+
+import numpy as np
 from main import MainClass
 
 class LinuxScript(MainClass):
@@ -27,9 +30,11 @@ class LinuxScript(MainClass):
             "fields":["time", "free", "total"]
         }
 
-    def predict(self):
-        x = self.data.get("time")
-        y = 1 - (self.data.get("free") / self.data.get("total")) 
+    def predict(self, data):
+        x = data["time"]
+        free = np.array(data["free"])
+        total = np.arrya(data["total"])
+        y = 1 - (free / total)
         return = self._predict(x, y)
 
 
