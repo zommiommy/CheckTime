@@ -19,9 +19,11 @@ class WinScript(MainClass):
                 "service":self.args.service
                 },
             "optional":{
-                "matric":self.args.metric
-                }, 
-            "blacklist":self.args.exclude,
+                "matric":{
+                    "values":self.args.metric,
+                    "blacklist":self.args.exclude
+                    }
+                },
             "fields":["time", "value", "max"]
         }
 

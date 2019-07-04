@@ -46,15 +46,25 @@ class MainClass:
             logger.error("The warning time ({}) should be bigger than the critical time ({})\n".format(self.args.warning_threshold,self.args.critical_threshold))
             os.exit(-1)
 
+    def render_optionals(self, dg):
+        for name, dictionary in self.query["optionals"].items():
+            values = dictionary["values"]
+            blacklist = dictionary["blacklist"]
+            
+            if not values:
+                values = dg.get_available(name)
+                
+            filtered_values = [v for v in values if m not in blacklist]
+            
+            logger.debug("Rendered for the metrics [{}]".format(", ".join(filtered_values)))
+            self.query["optionals"][name] = filtered_values
+
+
     def get_data(self):
         dg = DataGetter(self.query)
-        metrics = next(self.query["optionals"].values())
-        if not metrics:
-            metrics = dg.get_metrics()
-        # Filter the metric that was passed with the  -e param
-        filtered_metrics = [m for m in metrics if m not in self.query["blacklist"]]
-        logger.debug("Predicting for the metrics [{}]".format(", ".join(filtered_metrics)))
-        return [dg.get_data(m) for m in filtered_metrics] 
+        self.render_optionals(dg)
+        last_optional = list(self.query["optionals"].values())[-1]
+        return [dg.get_data(m) for m in last_optional] 
 
     def construct_query(self):
         raise  NotImplemnetedError("This metod is ment to be overwritten by subclasses")
