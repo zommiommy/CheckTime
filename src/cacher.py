@@ -1,6 +1,8 @@
 
 
 # TODO make a good cacher decorator to cache the queries
+# TODO add cache persistency
+#   TODO Add cache expiration
 def cacher(f):
     cache = {}
     def wrapper(*args, **kwargs):

@@ -10,6 +10,16 @@ from influxdb import InfluxDBClient
 
 logger = logging.getLogger(__name__)
 
+def transpose(lista):
+    """Transpose a list of dictionaries to a dictionary of lists. 
+       It assumes all the dictionaries have the sames keys."""
+    _dict = {}
+    for x in lista:
+        for k, v in x.items():
+            _dict.setdefault(k,[])
+            _dict[k] += [v]
+    return _dict
+
 class DataGetter:
     setting_file = "/db_settings.json"
 
@@ -18,7 +28,7 @@ class DataGetter:
         self.query = query
 
         # Get the current folder
-        current_script_dir = "/".join(__file__.split("/")[:-1])
+        current_script_dir = "/".join(__file__.split("/")[:-2])
         
         path = current_script_dir + self.setting_file
         logger.debug("Loading the DB settings from [%s]"%path)
@@ -41,17 +51,21 @@ class DataGetter:
         return self.client.query(query).get_points()
 
     def construct_selection(self, args: Union[Dict[str,str], Dict[str,List[str]]]):
-        """Create a WHERE selection in normal disjoint form (AND of ORS)"""
+        """Create a WHERE selection in normal disjoint form (AND of ORS) and prepare for the final time selection"""
+        if not args:
+            return """ WHERE """
         # Normalize to lists all the values in the dictionary
         converted = {k : list(v) for k, v in args.items() if type(v) != list }
-        args = {**args, **converted}
+        query = {**query, **converted}
         # constrct all the equivalences
-        args = [["{} = '{}'".format(k, x) for x in v] for k, v in args.items()]
+        query = [["{} = '{}'".format(k, x) for x in v] for k, v in query.items()]
         # Construct the ORs
-        args = [" OR ".join(v) for v in args]
+        query = ["(%s)"%(" OR ".join(v)) for v in query]
         # Construct the AND
-        args = " AND ".join(args)
-        return """ WHERE %s"""%args
+        query = " AND ".join(query)
+        # Add the final And for the time selection
+        query += " AND "
+        return """ WHERE %s"""%query
 
     def get_distinct_values(self, name : str, args : Dict[str,str] = {}) -> List:
         """
@@ -126,5 +140,6 @@ class DataGetter:
 
         fields = ", ".join(self.query["fields"])
         where = self.construct_selection({**self.query["selectors"], **self.query["optionals"]})
-        query = """SELECT {fields} FROM "{measurement}" {where})""".format(**locals())
-        return self.exec_query(query)
+        time = self.query["time"]
+        query = """SELECT {fields} FROM "{measurement}" {where} {time})""".format(**locals())
+        return transpose(self.exec_query(query))

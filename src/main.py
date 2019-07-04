@@ -76,6 +76,11 @@ class MainClass:
         # This just save the need to import files on the two frontends
         return predict_time_left(x, y)
 
+    def add_time_to_query(self):
+        """ Add the time selector to the query json"""
+        time = """time > now() - {}""".format(self.args.window)
+        self.query.update({"time":time})
+
     def exit(self):
         # Critical case
         if any(t < self.args.critical_threshold for t in self.predicted_times):
@@ -95,6 +100,7 @@ class MainClass:
         self.set_verbosity()
         self.validate_args()
         self.query = self.construct_query()
+        self.add_time_to_query()
         self.data = self.get_data()
         self.predicted_times = [self.predict(*data) for data in self.data]
         self.exit()
