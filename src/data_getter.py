@@ -39,7 +39,7 @@ class DataGetter:
     def exec_query(self, query : str):
         # Construct the query to workaround the tags distinct constraint
         logger.info("Executing query [%s]"%query)
-        return self.client.query(query).get_points()
+        return list(self.client.query(query).get_points())
 
     def construct_selection(self, args: Union[Dict[str,str], Dict[str,List[str]]]):
         """Create a WHERE selection in normal disjoint form (AND of ORS) and prepare for the final time selection"""
@@ -144,5 +144,5 @@ class DataGetter:
         # Do the query and filter only the useful fields
         measurement = self.measurement
         query = """SELECT {fields} FROM (SELECT * FROM "{measurement}" {where} {time})""".format(**locals())
-        results = list(self.exec_query(query))
+        results = self.exec_query(query)
         return results

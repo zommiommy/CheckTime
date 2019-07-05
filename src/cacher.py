@@ -1,18 +1,14 @@
 
+import os
+import sys
+import json
+import logging
+from functools import lru_cache
+
+logger = logging.getLogger(__name__)
 
 # TODO make a good cacher decorator to cache the queries
 # TODO add cache persistency
 #   TODO Add cache expiration
-def cacher(f):
-    cache = {}
-    def wrapped(*args, **kwargs):
-        _hash = hash(str(args) + str(kwargs))
 
-        cached = cache.get(_hash, None)
-
-        if not cached:
-            cached = f(*args, **kwargs)
-            cache[_hash] = cached
-
-        return cached
-    return wrapped
+cacher = lambda x: lru_cache()(x)
