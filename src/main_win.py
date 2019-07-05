@@ -1,4 +1,10 @@
+
+
+import logging
+import numpy as np
 from main import MainClass
+
+logger = logging.getLogger(__name__)
 
 class WinScript(MainClass):
 
@@ -15,10 +21,10 @@ class WinScript(MainClass):
         return {
             "measurement":self.args.measurement,
             "selectors":{
-                "host":self.args.host,
+                "hostname":self.args.host,
                 "service":self.args.service
                 },
-            "optional":{
+            "optionals":{
                 "matric":{
                     "values":self.args.metric,
                     "blacklist":self.args.exclude
@@ -27,12 +33,13 @@ class WinScript(MainClass):
             "fields":["time", "value", "max"]
         }
 
-    def predict(self, data):
-        x = data["time"]
+
+    def parse_data(self, data):
+        x = np.array(data["time"])
         value = np.array(data["value"])
-        _max = np.arrya(data["max"])
+        _max = np.array(data["max"])
         y = value / _max
-        return self._predict(x, y)
+        return x, y
 
 
 

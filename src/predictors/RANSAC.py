@@ -1,3 +1,6 @@
+
+
+import numpy as np
 from typing import Tuple
 from sklearn.linear_model import RANSACRegressor
 

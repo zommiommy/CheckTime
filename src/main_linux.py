@@ -1,7 +1,10 @@
 
 
+import logging
 import numpy as np
 from main import MainClass
+
+logger = logging.getLogger(__name__)
 
 class LinuxScript(MainClass):
 
@@ -21,7 +24,7 @@ class LinuxScript(MainClass):
                 "host":self.args.host,
                 "device":self.args.device
                 },
-            "optional":{
+            "optionals":{
                 "path":{
                     "values":self.args.path,
                     "blacklist":self.args.exclude
@@ -30,12 +33,12 @@ class LinuxScript(MainClass):
             "fields":["time", "free", "total"]
         }
 
-    def predict(self, data):
+    def parse_data(self, data):
         x = data["time"]
         free = np.array(data["free"])
-        total = np.arrya(data["total"])
+        total = np.array(data["total"])
         y = 1 - (free / total)
-        return = self._predict(x, y)
+        return x, y
 
 
 

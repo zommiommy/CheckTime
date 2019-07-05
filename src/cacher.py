@@ -5,7 +5,7 @@
 #   TODO Add cache expiration
 def cacher(f):
     cache = {}
-    def wrapper(*args, **kwargs):
+    def wrapped(*args, **kwargs):
         _hash = hash(str(args) + str(kwargs))
 
         cached = cache.get(_hash, None)
@@ -14,5 +14,5 @@ def cacher(f):
             cached = f(*args, **kwargs)
             cache[_hash] = cached
 
-         return cached
+        return cached
     return wrapped
