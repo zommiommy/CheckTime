@@ -26,7 +26,7 @@
 }
 \lstset{escapeinside={<@}{@>}}
 
-\newcommand{\version}{V0.2.1}
+\newcommand{\version}{V0.3}
 
  
 \pagestyle{fancy}
@@ -36,7 +36,7 @@
 \lhead{\url{t.fontana@net2action.com}}
 \rfoot{Page \thepage}
 
-\title{Analisi e Descrizione Iniziali del Plugin \\ \textbf{DiskCheck \version}}
+\title{Analisi e Descrizione Iniziali del Plugin \\ \textbf{CheckTime \version}}
 \author{Tommaso Fontana}
 
 
@@ -45,10 +45,11 @@
 \maketitle
 
 \begin{abstract}
-Descrizione iniziale del plugin che analizzando i valori di utilizzo del disco di una macchina di un dato periodo di tempo \(\Delta t\) stima quanto tempo rimane prima della saturazione del disco e genera warning nel caso il tempo sia inferiore a certe threshold.
+Descrizione iniziale del plugin che analizzando i valori di utilizzo del disco di una macchina di un dato periodo di tempo \(\Delta t\) stima quanto tempo rimane prima della saturazione di un risorsa e genera warning nel caso il tempo sia inferiore a certe threshold. L'utilizzo principale pensato per lo script e' monitorare lo stato dei dischi ma lo script e' abbastanza generale da poter trattare anche altri casi (e.g. CPU/RAM) purche' sia definito il valore attuale e quello massimo.
 \end{abstract}
 
 \clearpage
+
 \part*{Descrizione del problema}
 Attualmente le threshold di warning e critical per i dischi dei server sono espresse in bytes.
 \\\\
@@ -72,33 +73,42 @@ Inoltre cio' evita falsi allarmi, nel caso del firewall enunciato prima l'utente
 \\\\
 Infine permette di avere dati oggettivi e quantificabili su cui poter ragionare invece che grafici che lasciano spazio all'interpretazione.
 Questo permette un'organizzazione piu' precisa ed oggettiva.
+\\\\
+Il caso dei dischi e' solo uno dei vari casi in cui avere una metrica espressa in tempo risulta utile rispetto ad averla espressa nella sua unita'.
+\\\\
+Un altro caso potrebbe essere l'utilizzo di RAM / CPU di un server.\\
+Con il passare del tempo, ci si aspetta che il numero di utenti cresca.\\
+Con piu' utenti attivi il servizio richiedera' piu' risorse, quindi con questo script potremmo prevedere quando servira' fare scaling (verticale o orizzontale) dei server che gestiscono il serivzio.
+\\
+Il principale vantaggio e' che questo permette di creare una stima di un piano di investimento nel tempo per adeguare l'hardware alla crescita del servizio.
 
 
 \clearpage
 
 \part*{Descrizione Implementazione del Plugin}
-
+\textbf{Premessa}: Come verra' descirtto piu' avanti avremo bisogno di due frontend, uno per windows ed uno per linux. Questi sono \textit{checktimewin, checktimelinux} ma in generale quando non e' necessario specificare il sistema operativo perche' si parla di feature comuni verra' scritto solamente \textit{checktime} omettendo l'OS per quanto l'eseguibile \textit{checktime} non esiste.
 \section*{Descrizione Installazione e Configurazione}
 Lo script non avra' bisogno di alcuna dipendenza poiche' autocontenuto nella cartella.\\
 La procedura di installazione sara' soltanto la copia della cartella sul sistema e la creazione del file di cron-job che avra' sintassi simile a:
 
 \begin{lstlisting}[language=Bash]
-*/5 * * * * <@\textcolor{red}{/var/diskcheck/diskcheck}@> -H "rt-sccm01-p1.idolrt.regione.toscana.it"
+*/5 * * * * <@\textcolor{red}{/var/checktime/checktime}@> -H "rt-sccm01-p1.idolrt.regione.toscana.it"
     -s "Diskspace" -m "Win" -n "1d" -w "4w" -c "1w"
 \end{lstlisting}
 
 \subsection*{Aggiunta dello script al PATH}
 Si puo' creare un link simbolico:
 \begin{lstlisting}[language=Bash]
-$ sudo ln -s /var/diskcheck/diskcheck /bin/diskcheck
+$ sudo ln -s /var/checktime/checktimewin   /bin/checktimewin
+$ sudo ln -s /var/checktime/checktimelinux /bin/checktimelinux
 \end{lstlisting}
 
-cosi che in tutto il sistema si possa chiamare \textit{diskcheck} come qualsiasi altro commando nel \textit{PATH}.
+cosi che in tutto il sistema si possa chiamare \textit{checktime} come qualsiasi altro commando nel \textit{PATH}.
 \\\\
-Cio' permette di avere il file di cron che non deve avere hardcodato il path di installazione di \textit{diskcheck}:
+Cio' permette di avere il file di cron che non deve avere hardcodato il path di installazione di \textit{checktime}:
 
 \begin{lstlisting}[language=Bash]
-*/5 * * * * <@\textcolor{red}{diskcheck}@> -H "rt-sccm01-p1.idolrt.regione.toscana.it"
+*/5 * * * * <@\textcolor{red}{checktime}@> -H "rt-sccm01-p1.idolrt.regione.toscana.it"
     -s "Diskspace" -m "Win" -n "1d" -w "4w" -c "1w"
 \end{lstlisting}
 
@@ -135,12 +145,27 @@ $ git pull
 \section*{Descrizione Utilizzo}
 
 \subsection*{Input}
-Lo script dovra' sapere su quale Host, Servizio e opzionalemnte Metrica fare la analisi.
-Questi dati dovranno essere passati allo script tramite riga di comando nella seguente sintassi:
+Poiche' gli schema dei db sono diversi a seconda del fatto che il sistema sia \textcolor{blue}{Windows} o \textcolor{red}{Linux} avremo bisogno di due "frontend" per poter passare i dati allo script core.\\
+Rispettivamente gli eseguibili \textit{checktimewin} e \textit{checktimelinux}.\\
+Quando possibile, per essere il piu' generali possibili verra' scritto \textit{checktime} omettendo il sistema operativo specifico per quanto l'eseguibile \textit{checktime} non esiste.
+\\
+\\
+Nello specifico gli schema dei measurements per i due sistemi sono:
+
 \begin{lstlisting}[]
-$ ./diskcheck -h
-usage: diskcheck [-h] -M MEASUREMENT -H HOST -s SERVICE [-m METRIC] [-e EXCLUDE]
-               -n WINDOW -w WARNING_THRESHOLD -c CRITICAL_THRESHOLD [-v {0,1}]
+<@\textcolor{blue}{Windows}@>:
+time, hostname, matric, service, warn, crit, max, unit, value
+<@\textcolor{red}{Linux}@>:
+time, device, free, fstype, host, inodes_free, inodes_total, 
+    mode, path, total, used_percent
+\end{lstlisting}
+
+\subsubsection*{\textcolor{blue}{Windows} frontend}
+\begin{lstlisting}[]
+$ ./checktimewin -h
+usage: main_win.py [-h] -M MEASUREMENT -n WINDOW -w WARNING_THRESHOLD -c
+                   CRITICAL_THRESHOLD [-v {0,1}]<@\textcolor{blue}{ -H HOST -s SERVICE}@>
+                   <@\textcolor{blue}{[-m METRIC] [-e EXCLUDE]}@>
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -148,15 +173,6 @@ optional arguments:
 query settings (required):
   -M MEASUREMENT, --measurement MEASUREMENT
                         measurement where the data will be queried.
-  -H HOST, --host HOST  host which disks will be checked.
-  -s SERVICE, --service SERVICE
-                        service to be checked.
-
-query settings (optional):
-  -m METRIC, --metric METRIC
-                        metric to be checked.
-  -e EXCLUDE, --exclude EXCLUDE
-                        metric to be excluded from the analysis.
 
 thresholds settings:
   -n WINDOW, --window WINDOW
@@ -172,27 +188,100 @@ verbosity settings (optional):
   -v {0,1}, --verbosity {0,1}
                         set the logging verbosity, 0 == ERROR, 1 == DEBUG, it
                         defaults to ERROR.
-\end{lstlisting}
 
-quindi un esempio di chiamata dello script e':
+<@\textcolor{blue}{os dependant settings (required) Windows:}@>
+  <@\textcolor{blue}{-H HOST, --host HOST  host which disks will be checked.}@>
+  <@\textcolor{blue}{-s SERVICE, --service SERVICE}@>
+                        <@\textcolor{blue}{service to be checked.}@>
+
+<@\textcolor{blue}{os dependant settings (optional) Windows:}@>
+  <@\textcolor{blue}{-m METRIC, --metric METRIC}@>
+                        <@\textcolor{blue}{metric to be checked.}@>
+  <@\textcolor{blue}{-e EXCLUDE, --exclude EXCLUDE}@>
+                        <@\textcolor{blue}{metric to be excluded from the analysis.}@>
+
+\end{lstlisting}
+\clearpage
+\subsubsection*{Esempio di utilizzo}
+
 \begin{lstlisting}[language=Bash]
-$ diskcheck  <@\textcolor{gray}{-M "disk"}@>  <@\textcolor{blue}{-H "rt-sccm01-p1.idolrt.regione.toscana.it"}@> 
+$ checktime  <@\textcolor{gray}{-M "disk"}@>  <@\textcolor{blue}{-H "rt-sccm01-p1.idolrt.regione.toscana.it"}@> 
     <@\textcolor{green!10!orange!90!}{-s "Diskspace"}@> <@\textcolor{red}{-m "C:/"}@> <@\textcolor{green!20!blue!80!}{-n "1d"}@> <@\textcolor{black!30!green!70!}{-w "4w"}@> <@\textcolor{black!30!magenta!70!}{-c "1w"}@>
 \end{lstlisting}
 
 Il quale controllera' dal \textcolor{gray}{measurement \textit{disk}} per \textcolor{blue}{l'host \textit{"rt-sccm01-p1.idolrt.regione.toscana.it"}}, \textcolor{green!10!orange!90!}{il servizio \textit{"Diskspace"}} per  \textcolor{red}{la metrica \textit{"C:/"}} utilizzando \textcolor{green!20!blue!80!}{i dati dell'ultimo giorno} e generera' un \textcolor{black!30!green!70!}{warning se il tempo previsto e'  inferiore a 4 settimane} \textcolor{black!30!magenta!70!}{ed un critical error nel caso sia inferiore ad una settimana}.
+\\\\
+
+\subsubsection*{\textcolor{red}{Linux} frontend}
+Lo script dovra' sapere su quale Host, Servizio e opzionalemnte Metrica fare la analisi.
+Questi dati dovranno essere passati allo script tramite riga di comando nella seguente sintassi:
+\begin{lstlisting}[]
+$ ./checktimelinux -h
+usage: main_linux.py [-h] -M MEASUREMENT -n WINDOW -w WARNING_THRESHOLD -c
+                     CRITICAL_THRESHOLD [-v {0,1}] <@\textcolor{red}{-H HOST -d DEVICE}@>
+                     <@\textcolor{red}{[-p PATH] [-e EXCLUDE]}@>
+optional arguments:
+  -h, --help            show this help message and exit
+
+query settings (required):
+  -M MEASUREMENT, --measurement MEASUREMENT
+                        measurement where the data will be queried.
+
+thresholds settings:
+  -n WINDOW, --window WINDOW
+                        the range of time to consider in the analysis.
+  -w WARNING_THRESHOLD, --warning-threshold WARNING_THRESHOLD
+                        the time that if the predicted time is lower the
+                        script will exit(1).
+  -c CRITICAL_THRESHOLD, --critical-threshold CRITICAL_THRESHOLD
+                        the time that if the predicted time is lower the
+                        script will exit(2).
+
+verbosity settings (optional):
+  -v {0,1}, --verbosity {0,1}
+                        set the logging verbosity, 0 == ERROR, 1 == DEBUG, it
+                        defaults to ERROR.
+
+<@\textcolor{red}{os dependant settings (required) Linux:}@>
+  <@\textcolor{red}{-H HOST, --host HOST  host which disks will be checked.}@>
+  <@\textcolor{red}{-d DEVICE, --device DEVICE}@>
+                        <@\textcolor{red}{service to be checked.}@>
+
+<@\textcolor{red}{os dependant settings (optional) Linux:}@>
+  <@\textcolor{red}{-p PATH, --path PATH  metric to be checked.}@>
+  <@\textcolor{red}{-e EXCLUDE, --exclude EXCLUDE}@>
+                        <@\textcolor{red}{path to be excluded from the analysis.}@>
+
+\end{lstlisting}
 
 \clearpage
+\section*{Cornercases}
+Poiche' si cerca di mantenere il comportamento dei frontend il piu' omogeneo possibile varra' la equivalenza tra:
 
-\subsubsection*{Cornercase: Cosa succede se uno o piu' parametri non sono passati}
-Se un parametro non viene passato lo script uscira' con \textbf{exit(1)} ed elenchera' quali parametri mancano sulla \textbf{stderr}.
+\begin{lstlisting}[language=Bash]
+-d DEVICE <-> -s SERVICE
+-p PATH   <-> -m METRIC
+\end{lstlisting}
+e gli \textit{-e} funzioneranno esattamente nello stesso modo pero' si riferiranno a \textit{PATH} o a \textit{METRIC} a seconda del frontend.
+
+La gerarchia dei field per i due sistemi quindi sara':
+\begin{lstlisting}[language=Bash]
+<@\textcolor{blue}{Windows}@>:
+Measurement > Host > Service > Metric
+<@\textcolor{red}{Linux}@>:
+Measurement > Host > Device > Path
+\end{lstlisting}
+Per cercare di rendere la trattazione il piu' omogenea e predittbile possibile.
+
+\subsubsection*{Cornercase: Cosa succede se uno o piu' parametri richiesti non sono passati}
+Se un parametro rischiesto o piu' non viene passato lo script uscira' con \textbf{exit(1)} ed elenchera' quali parametri mancano sulla \textbf{stderr}.
 \\
 e.g. se lo script viene chiamato senza parametri:
 \begin{lstlisting}[language=Bash]
-$ diskcheck
-usage: diskcheck [-h] -M MEASUREMENT -H HOST -s SERVICE [-m METRIC] [-e EXCLUDE]
+$ checktime
+usage: checktime [-h] -M MEASUREMENT -H HOST -s SERVICE [-m METRIC] [-e EXCLUDE]
                -n WINDOW -w WARNING_THRESHOLD -c CRITICAL_THRESHOLD [-v {0,1}]
-diskcheck: error: the following arguments are required:
+checktime: error: the following arguments are required:
 -M/--measurement, -H/--host, -s/--service, -n/--window,
 -w/--warning-threshold, -c/--critical-threshold
 \end{lstlisting}
@@ -202,38 +291,41 @@ Se uno o piu' parametri non esistono sul DB (eccetto le metriche) allora lo scri
 \\
 Lo script si ferma al primo parametro non trovato con ordine di priorita':
 \begin{lstlisting}[language=Bash]
+<@\textcolor{blue}{Windows}@>:
 Measurement > Host > Service > Metric
+<@\textcolor{red}{Linux}@>:
+Measurement > Host > Device > Path
 \end{lstlisting}
 Il caso in cui una metrica non esiste viene affrontato piu' avanti.\\
 e.g. se si sbaglia a scrivere \textit{"disk"} e si scrive \textit{"disck"}:
 \begin{lstlisting}[language=Bash]
-$ diskcheck -M "disck" -H "rt-sccm01-p1.idolrt.regione.toscana.it" 
+$ checktime -M "disck" -H "rt-sccm01-p1.idolrt.regione.toscana.it" 
     -s "Diskspace" -n "1d" -w "4w" -c "1w"
 <@\textcolor{red}{error: measurement "disck" not found.}@>
 \end{lstlisting}
 
 e.g. se si sbaglia a scrivere l'host:
 \begin{lstlisting}[language=Bash]
-$ diskcheck -M "disk" -H "rt-sccm01-p1.idolrt.regione.toscana.com" 
+$ checktime -M "disk" -H "rt-sccm01-p1.idolrt.regione.toscana.com" 
     -s "Diskspace" -n "1d" -w "4w" -c "1w"
 <@\textcolor{red}{error: host "rt-sccm01-p1.idolrt.regione.toscana.com" not found.}@>
 \end{lstlisting}
 
 e.g. se si sbaglia a scrivere il service:
 \begin{lstlisting}[language=Bash]
-$ diskcheck -M "disk" -H "rt-sccm01-p1.idolrt.regione.toscana.it" 
+$ checktime -M "disk" -H "rt-sccm01-p1.idolrt.regione.toscana.it" 
     -s "diskspace" -n "1d" -w "4w" -c "1w"
 <@\textcolor{red}{error: service "diskspace" not found.}@>
 \end{lstlisting}
 
 \clearpage
-\subsection*{Scelta delle metriche}
-\subsubsection*{Selezione delle metriche}
-Se allo script non viene passato nessun parametro \textit{-m} allora lo script selezionera' di default tutte le metriche presenti sul DB.
+\subsection*{Scelta delle metriche / path}
+\subsubsection*{Selezione delle metriche / path}
+Se allo script non viene passato nessun parametro \textit{-m/-p} allora lo script selezionera' di default tutte le metriche / path presenti sul DB.
 
 e.g.:
 \begin{lstlisting}[language=Bash]
-$ diskcheck -M "disk" -H "rt-sccm01-p1.idolrt.regione.toscana.it" 
+$ checktime -M "disk" -H "rt-sccm01-p1.idolrt.regione.toscana.it" 
     -s "Diskspace" -n "1d" -w "4w" -c "1w"
 / 1y3d4s
 /produzione 3w
@@ -246,18 +338,18 @@ Se invece vogliamo analizzare solo un subset ti metriche queste dovranno essere 
 
 e.g.:
 \begin{lstlisting}[language=Bash]
-$ diskcheck -M "disk" -H "rt-sccm01-p1.idolrt.regione.toscana.it" 
-    -s "Diskspace" <@\textcolor{red}{-m "/" -m "/produzione"}@> -n "1d" -w "4w" -c "1w"
+$ checktime -M "disk" -H "rt-sccm01-p1.idolrt.regione.toscana.it" 
+    -s "Diskspace" <@\textcolor{red}{-p "/" -p "/produzione"}@> -n "1d" -w "4w" -c "1w"
 / 1y3d4s
 /produzione 3w
 \end{lstlisting}
 
-\subsubsection*{Filtraggio delle metriche}
-Se si vuole escludere qualche metrica dalla analisi basta passarla al parametro \textit{-e}.\\
+\subsubsection*{Filtraggio delle metriche / path}
+Se si vuole escludere qualche metrica / path dalla analisi basta passarla al parametro \textit{-e}.\\
 
 e.g. analizzare tutto ma escludere \textit{/tmp, /var, /mnt}: 
 \begin{lstlisting}[language=Bash]
-$ diskcheck -M "disk" -H "rt-sccm01-p1.idolrt.regione.toscana.it" 
+$ checktime -M "disk" -H "rt-sccm01-p1.idolrt.regione.toscana.it" 
     -s "Diskspace"  <@\textcolor{red}{-e "/tmp" -e "/var" -e "/mnt"}@> -n "1d" -w "4w" -c "1w"
 /home 1d2s
 /produzione 1y3d
@@ -265,12 +357,12 @@ $ diskcheck -M "disk" -H "rt-sccm01-p1.idolrt.regione.toscana.it"
 
 \subsubsection*{Cornercase: presenza di entrambi \textit{-m, -e}}
 
-I parametri \textit{-m} ed \textit{-e} sono combinabili.
+I parametri \textit{-m/p} ed \textit{-e} sono combinabili.
 
 e.g. questo script analizzera' solo \textit{/tmp}: 
 \begin{lstlisting}[language=Bash]
-$ diskcheck -M "disk" -H "rt-sccm01-p1.idolrt.regione.toscana.it" 
-    -s "Diskspace"  <@\textcolor{red}{-m "/tmp" -m "/var" -e "/var"}@> -n "1d" -w "4w" -c "1w"
+$ checktime -M "disk" -H "rt-sccm01-p1.idolrt.regione.toscana.it" 
+    -s "Diskspace"  <@\textcolor{red}{-p "/tmp" -p "/var" -e "/var"}@> -n "1d" -w "4w" -c "1w"
 /tmp 1y2w4s
 \end{lstlisting}
 
@@ -281,18 +373,18 @@ Nel caso eseguissimo un \textit{-e} su una metrica non presente sul DB questa ve
 \\
 e.g. questo script non genera' errori o warning a causa della non esistenza di \textit{C:/} o \textit{/tmp}: 
 \begin{lstlisting}[language=Bash]
-$ diskcheck -M "disk" -H "rt-sccm01-p1.idolrt.regione.toscana.it" 
+$ checktime -M "disk" -H "rt-sccm01-p1.idolrt.regione.toscana.it" 
     -s "Diskspace"  <@\textcolor{red}{-e "C:/" -e "/tmp"}@> -n "1d" -w "4w" -c "1w"
 \end{lstlisting}
 
 
-\subsubsection*{Cornercase: \textit{-m} di una metrica non esistente}
-Nel caso eseguissimo un \textit{-m} su una metrica non presente sul DB questa verrà ignorata nella analisi ma ritornerà uno stato di un warning (\textbf{exit(1)}) e vera' scritto un messaggio di warning sulla \textbf{stderr}.\\
+\subsubsection*{Cornercase: \textit{-m/p} di una metrica / path non esistente}
+Nel caso eseguissimo un \textit{-m/p} su una metrica / path non presente sul DB questa verrà ignorata nella analisi ma ritornerà uno stato di un warning (\textbf{exit(1)}) e vera' scritto un messaggio di warning sulla \textbf{stderr}.\\
 (Nel caso lo script dovesse ritornare \textbf{exit(2)} a causa di un valore fuori threshold allora lo script darà priorità alla \textbf{exit(2)} rispetto al \textbf{exit(1)})
 \\
 e.g. questo script genera' un warning a causa della non esistenza di \textit{C:/} o \textit{/tmp}: 
 \begin{lstlisting}[language=Bash]
-$ diskcheck -M "disk" -H "rt-sccm01-p1.idolrt.regione.toscana.it" 
+$ checktime -M "disk" -H "rt-sccm01-p1.idolrt.regione.toscana.it" 
     -s "Diskspace"  <@\textcolor{red}{-m "C:/" -m "/tmp"}@> -n "1d" -w "4w" -c "1w"
 warning: Not found the metric "C:/"
 /tmp 1w2d3m
@@ -305,14 +397,14 @@ warning: Not found the metric "C:/"
 \subsection{Output}
 Nel caso lo script sia andato su una singola metrica l'output scritto sulla \textbf{stdout} sara' simile a:
 \begin{lstlisting}[language=Bash]
-$ diskcheck -M "disk" -H "rt-sccm01-p1.idolrt.regione.toscana.it" 
+$ checktime -M "disk" -H "rt-sccm01-p1.idolrt.regione.toscana.it" 
     -s "Diskspace" -m "C:/" -n "1d" -w "4w" -c "1w"
 C:/ 1w2d3h
 \end{lstlisting}
 Nel caso vada su mutiple metriche l'output sara' simile a;
 
 \begin{lstlisting}[language=Bash]
-$ diskcheck -M "disk" -H "rt-sccm01-p1.idolrt.regione.toscana.it" 
+$ checktime -M "disk" -H "rt-sccm01-p1.idolrt.regione.toscana.it" 
     -s "Diskspace" -n "1d" -w "4w" -c "1w"
 C:/ 1w2d3h
 D:/ 1y3d
@@ -334,7 +426,7 @@ Nel caso qualunque metrica sia inferiore al livello di Critical lo script avra' 
 Nel caso che un disco abbia spazio utlizzato costante o decrescente l'output sara' del simile a:
 
 \begin{lstlisting}[language=Bash]
-$ diskcheck -M "disk" -H "rt-sccm01-p1.idolrt.regione.toscana.it" 
+$ checktime -M "disk" -H "rt-sccm01-p1.idolrt.regione.toscana.it" 
     -s "Diskspace" -n "1d" -w "4w" -c "1w"
 C:/  <@\textcolor{red}{inf}@>
 D:/ 1y3d
@@ -368,25 +460,28 @@ inf
 \section*{Descrizione Cartella}
 La cartella dello script avra' la seguente struttura:
 \begin{lstlisting}[language=Bash]
-drwxr-xr-x 5 user user 4,0K 21 giu 14.09 diskcheck_venv
--rwxr-xr-x 1 user user 2,2K 23 giu 19.04 diskcheck
--rw-r--r-- 1 user user  275 21 giu 14.37 db_settings.json
--rw-r--r-- 1 user user  666 21 giu 14.52 analyze_data.py
--rw-r--r-- 1 user user  439 23 giu 19.00 data_getter.py
--rw-r--r-- 1 user user 2,2K 23 giu 19.04 main.py
--rw-r--r-- 1 user user   85 21 giu 14.51 predict_time.py
+drwxr-xr-x 5 user user 4,0K 29 giu 14.25 check_time_venv
+drwxr-xr-x 4 user user 4,0K 29 giu 14.21 doc
+drwxr-xr-x 3 user user 4,0K  2 lug 23.01 src
+drwxr-xr-x 2 user user 4,0K 29 giu 13.51 tests
+-rw-r--r-- 1 user user  281 29 giu 13.33 db_settings.json
+-rw-r--r-- 1 user user  18K 29 giu 14.22 license
+-rw-r--r-- 1 user user   95 29 giu 14.24 README.rst
+-rwxr-xr-x 1 user user  102 29 giu 16.26 checktimewin
+-rwxr-xr-x 1 user user  103 29 giu 16.27 checktimelinux
 \end{lstlisting}
 
 Legenda:
 \begin{itemize}
-    \item \textbf{diskcheck\_venv} e' la cartella del virtual environment di python 3 gia' configurato.
-    \item \textbf{diskcheck} e' l'eseguibile.
-    \item \textbf{db\_settings.json} e' il file di configurazione per configurare come connettersi al DB.
-    \item \textbf{main.py} e' il file python che si occupa della gestione dei settaggi in input e del'output.
-    \item \textbf{db\_helper.py} e' il file che contiene la logica di estrazione e scrittura dei dati sul DB influx.
-    \item \textbf{predit\_time.py} e' il file che data la lista measurement di utilizzo del disco e il loro timestamp calcola il tempo rimanente alla saturazione.
-    \item \textbf{analyze\_data.py} e' il file che contiene la logica per prendere i dati dal DB, normalizzarli e passarli al \textit{predict\_time.py}.
-    \item \textbf{logger.py} TODO file per la configurazione e setup del logging solo su stderr
+    \item \textbf{check\_time\_venv} E' la cartella del virtual environment di python 3 gia' configurato.
+    \item \textbf{doc} La cartella contenete la documentazione e gli esempi di utilizzo dello script.
+    \item \textbf{src} La cartella con i sorgenti python dello script.
+    \item \textbf{tests} La cartella conetenente i test da poter eseguire post installazione per poter testare che lo script funzioni correttamente.
+    \item \textbf{db\_settings.json} E' il file di configurazione per configurare come connettersi al DB.
+    \item \textbf{license} La licenza GPL2 dello script.
+    \item \textbf{README.rst} File di intro della repo e tutorial veloce su come installare, aggiornare ed utilizzare lo script.
+    \item \textbf{checktimelinux} E' l'eseguibile per Linux.
+    \item \textbf{checktimewin} E' l'eseguibile per Windows.
 \end{itemize}
 
 \clearpage
@@ -461,7 +556,7 @@ E' un metodo robusto per fare fitting di dati anche in presenza di outliers quin
  L'assunzione di base per il funzionamento è che i dati siano costituiti da dei dati giusti e da dei dati di rumore.\\\\
  Un esempio di applicazione in cui i punti blu sono ritenuti dati e quelli rossi vengono classificati come rumore:
 \begin{center}
-\includegraphics[width=8cm]{imgs/RANSAC.png}
+\includegraphics[width=8cm]{RANSAC.png}
 \end{center}    
 
 \subsubsection{Regressione Bayesiana}
@@ -493,13 +588,13 @@ Ora usando il teorema di Bayes possiamo calcolare la distribuzione dei parametri
 
 dove \(P(m | U, T) \) e' la distribuzione di probabilità' del parametro \(m\) sapendo i dati di utilizzo e quelli di tempo \(U, T\).\\
 
-e più importante e' \(P(m | T)\) e il \textit{prior} che per \textit{"non aggiungere informazione"} potremmo considerare uniforme ma nel nostro caso per favorire i valori di pendenza positivi e sopratutto rendere più probabili i valori piccoli rispetto ad quelli grandi poiché lo spazio occupato salirà lentamente possiamo usare un \textit{prior} esponenziale.\\\\
+e più importante e' \(P(m | T)\) e il \textit{prior} che per \textit{"""non aggiungere informazione"""} potremmo considerare uniforme ma nel nostro caso per favorire i valori di pendenza positivi e sopratutto rendere più probabili i valori piccoli rispetto ad quelli grandi poiché lo spazio occupato salirà lentamente possiamo usare un \textit{prior} esponenziale.\\\\
 Questo metodo non e' applicabile direttamente su variabili continue ma possiamo approssimarlo usando un metodo MCMC nello specifico credo che il Campionamento di Gibbs sia ottimale.
 \\\\
 Esempio di stima bayesiana (la distribuzione a campana) vs stima puntuale (il singolo punto rappresentato dalla riga rossa tratteggiata).
 
 \begin{center}
-    \includegraphics[width=8cm]{imgs/BvsF.png}
+    \includegraphics[width=8cm]{BvsF.png}
 \end{center}
 
 \end{document}

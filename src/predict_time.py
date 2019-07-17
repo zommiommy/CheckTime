@@ -1,6 +1,7 @@
 
 import logging
-import numpy as np
+import numpy as np 
+from utils import Timer
 from predictors import *
 
 logger = logging.getLogger(__name__)
@@ -17,7 +18,8 @@ def predict_time_left(x : np.ndarray, y : np.ndarray, name : str, mode : str = "
 
     if mode in functions.keys():
         logger.info("Predicting using the mode [%s]"%mode)
-        m, q =  functions[mode](x, y)
+        with Timer("The prediction took {time}s"):
+            m, q =  functions[mode](x, y)
         logger.info("The coefficents predicted are m [{m}] q[{q}]".format(**locals()))
         if m <= 0:
             logger.info("The predicted line is not growing so it will never reach the max")

@@ -1,7 +1,11 @@
 
 
 import re
+import logging
+from time import time
 from datetime import datetime
+
+logger = logging.getLogger(__name__)
 
 epoch_to_iso = lambda x: datetime.fromtimestamp(x).strftime("%Y-%m-%dT%H:%M:%SZ")
 
@@ -61,3 +65,11 @@ def transpose(lista):
             _dict.setdefault(k,[])
             _dict[k] += [v]
     return _dict
+
+class Timer:
+    def __init__(self, format_):
+        self.format_ = format_
+    def __enter__(self):
+        self.start = time()
+    def __exit__(self, type, value, traceback):
+        logger.info(self.format_.format(time=(time()-self.start)))

@@ -9,7 +9,7 @@ docker rm checktime-test-env
 echo "#########################################################"
 echo "Build the container"
 echo "#########################################################"
-docker build --file Dockerfile -t checktime-test-env .
+docker build --file test_env_dockerfile -t checktime-test-env .
 
 echo "#########################################################"
 echo "Run the container"

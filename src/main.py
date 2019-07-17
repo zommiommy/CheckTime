@@ -89,7 +89,7 @@ class MainClass:
         return data
 
     def predict(self, option, subvalue):
-        logger.info("Option: [{option}] subvalue [{subvalue}]".format(**locals()))
+        logger.info("Analyzing the metric: [{option}] with value [{subvalue}]".format(**locals()))
         data = transpose([x for x in self.data if x[option] == subvalue])
         data = self.convert_types(data)
         x, y = self.parse_data(data)

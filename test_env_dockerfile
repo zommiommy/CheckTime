@@ -24,3 +24,8 @@ ADD ./ /checktime
 
 # Load the test data
 RUN /checktime/check_time_env/bin/python /checktime/test_env/load_data_to_db.py
+
+# TODO 
+# ENTRYPOINT run_tests.sh
+# Add this to travis to have constant check of the builds
+# Add tests

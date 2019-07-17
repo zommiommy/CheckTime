@@ -44,7 +44,7 @@ class DataGetter:
     def construct_selection(self, args: Union[Dict[str,str], Dict[str,List[str]]]):
         """Create a WHERE selection in normal disjoint form (AND of ORS) and prepare for the final time selection"""
 
-        logger.info("Constructing a selection where query part with [%s]"%args)
+        logger.debug("Constructing a selection where query part with [%s]"%args)
         if not args:
             return """ WHERE """
         # Normalize to lists all the values in the dictionary
@@ -103,6 +103,7 @@ class DataGetter:
             
     @cacher
     def check_existance(self, name : str, value : str):
+        logger.info("Checking the existance of ['%s']"%value)
         available = self.get_available(name)
         if value not in available:
             logger.error("The {name} [{value}] do not exist. The available one are [{available}]".format(**locals()))
@@ -111,6 +112,7 @@ class DataGetter:
 
     @cacher
     def check_existance_optionals(self, name : str, value : str):
+        logger.info("Checking the existance of ['%s']"%value)
         available = self.get_available(name)
         if value not in available:
             logger.error("The {name} [{metric}] do not exist. The available one are [{metrics}]".format(**locals()))
@@ -143,6 +145,7 @@ class DataGetter:
         time = self.query["time"]
         # Do the query and filter only the useful fields
         measurement = self.measurement
+        logger.info("Gathering the data for the analysis.")
         query = """SELECT {fields} FROM (SELECT * FROM "{measurement}" {where} {time})""".format(**locals())
         results = self.exec_query(query)
         return results
