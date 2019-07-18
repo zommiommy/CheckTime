@@ -1,17 +1,11 @@
 #!/bin/bash
+# CheckTime is a free software developed by Tommaso Fontana for Würth Phoenix S.r.l. under GPL-2 License.
 
-echo "#########################################################"
-echo "Stopping the istance if there is (This might take a few seconds)"
-echo "#########################################################"
 docker stop checktime-test-env
 docker rm checktime-test-env
 
-echo "#########################################################"
-echo "Build the container"
-echo "#########################################################"
+# "Build the container"
 docker build --file test_env_dockerfile -t checktime-test-env .
 
-echo "#########################################################"
-echo "Run the container"
-echo "#########################################################"
+# "Run the container"
 docker run -it checktime-test-env 

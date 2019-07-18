@@ -1,3 +1,4 @@
+# CheckTime is a free software developed by Tommaso Fontana for Würth Phoenix S.r.l. under GPL-2 License.
 # Use a container with influxdb on and the basic shell utils
 from ubuntu:18.04
 

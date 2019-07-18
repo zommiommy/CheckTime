@@ -1,3 +1,4 @@
+# CheckTime is a free software developed by Tommaso Fontana for Wurth Phoenix S.r.l. under GPL-2 License.
 
 import logging
 import numpy as np 
