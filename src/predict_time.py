@@ -3,9 +3,8 @@
 import logging
 import numpy as np 
 from utils import Timer
+from logger import logger
 from predictors import *
-
-logger = logging.getLogger(__name__)
 
 def predict_time_left(x : np.ndarray, y : np.ndarray, name : str, mode : str = "OLS") -> int:
     functions = {

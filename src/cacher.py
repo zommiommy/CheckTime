@@ -6,7 +6,7 @@ import json
 import logging
 from functools import lru_cache
 
-logger = logging.getLogger(__name__)
+from logger import logger
 
 # TODO make a good cacher decorator to cache the queries
 # TODO add cache persistency

@@ -5,12 +5,10 @@ import logging
 import argparse
 from typing import Dict, Union, List
 
+from logger import logger, setLevel
 from data_getter import DataGetter
 from predict_time import predict_time_left
-from utils import transpose, rfc3339_to_epoch, time_to_epoch, epoch_to_time
-
-
-logger = logging.getLogger(__name__)
+from utils import transpose, rfc3339_to_epoch, time_to_epoch, epoch_to_time, Timer
 
 
 
@@ -18,18 +16,27 @@ class MyParser(argparse.ArgumentParser):
     """Custom parser to ensure that the exit code on error is 1
         and that the error messages are printed on the stderr 
         so that the stdout is only for sucessfull data analysis"""
+
     def error(self, message):
         sys.stderr.write('error: %s\n' % message)
         self.print_help(file=sys.stderr)
         sys.exit(1)
 
+def check_overflow(epoch, _max = 2**32 - 1):
+    """ IF the epoch overflow, influx wants a INF"""
+    if epoch > _max:
+        logger.info("The value {epoch} is bigger than {_max} so it was capped to it to prevent Influx duration Overflow Error".format(**locals()))
+        return _max
+    return epoch
 
 class MainClass:
+
+    copyrights = """CheckTime is a free software developed by Tommaso Fontana for Wurth Phoenix S.r.l. under GPL-2 License."""
 
     def __init__(self):
         # Define the possible settings
 
-        self.parser = MyParser()
+        self.parser = MyParser(description=self.copyrights)
 
         query_settings_r = self.parser.add_argument_group('query settings (required)')
         query_settings_r.add_argument("-M", "--measurement",    help="measurement where the data will be queried.", type=str, required=True)
@@ -40,18 +47,19 @@ class MainClass:
         thresholds_settings.add_argument("-c", "--critical-threshold", help="the time that if the predicted time is lower the script will exit(2).", type=str, required=True)
 
         verbosity_settings= self.parser.add_argument_group('verbosity settings (optional)')
-        verbosity_settings.add_argument("-v", "--verbosity", help="set the logging verbosity, 0 == ERROR, 1 == info, it defaults to ERROR.",  type=int, choices=[0,1], default=0)
+        verbosity_settings.add_argument("-v", "--verbosity", help="set the logging verbosity, 0 == CRITICAL, 1 == INFO, it defaults to ERROR.",  type=int, choices=[0,1], default=0)
        
     def parse_arguments(self):
         self.args = self.parser.parse_args()
-        self.warning_threshold  = time_to_epoch(self.args.warning_threshold)
-        self.critical_threshold = time_to_epoch(self.args.critical_threshold)
+        self.warning_threshold  = check_overflow(time_to_epoch(self.args.warning_threshold))
+        self.critical_threshold = check_overflow(time_to_epoch(self.args.critical_threshold))
+        
 
     def set_verbosity(self):
-        if self.args.verbosity == 0:
-            logging.basicConfig(level=logging.CRITICAL)
+        if self.args.verbosity == 1:
+            setLevel(logging.INFO)
         else:
-            logging.basicConfig(level=logging.INFO)
+            setLevel(logging.CRITICAL)
 
     def validate_args(self):
         if self.warning_threshold < self.critical_threshold:
@@ -104,7 +112,7 @@ class MainClass:
 
     def add_time_to_query(self):
         """ Add the time selector to the query json"""
-        time = """time > now() - {}""".format(self.args.window)
+        time = """time > now() - {}s""".format(check_overflow(time_to_epoch(self.args.window)))
         self.query.update({"time":time})
 
     def exit(self):
@@ -126,11 +134,12 @@ class MainClass:
             sys.exit(0)
 
     def run(self):
-        self.parse_arguments()
-        self.set_verbosity()
-        self.validate_args()
-        self.query = self.construct_query()
-        self.add_time_to_query()
-        self.data = self.get_data()
-        self.predicted_times = [self.predict(option, subvalue) for option, values in self.query["optionals"].items() for subvalue in values]
-        self.exit()
+        with Timer("The total runtime was {time}s"):
+            self.parse_arguments()
+            self.set_verbosity()
+            self.validate_args()
+            self.query = self.construct_query()
+            self.add_time_to_query()
+            self.data = self.get_data()
+            self.predicted_times = [self.predict(option, subvalue) for option, values in self.query["optionals"].items() for subvalue in values]
+            self.exit()

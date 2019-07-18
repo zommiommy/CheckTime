@@ -2,9 +2,9 @@
 
 import logging
 import numpy as np
+from logger import logger
 from main import MainClass
 
-logger = logging.getLogger(__name__)
 
 class LinuxScript(MainClass):
 

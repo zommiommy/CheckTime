@@ -6,10 +6,10 @@ import json
 import logging
 import numpy as np
 from cacher import cacher
+from logger import logger
 from typing import List, Tuple, Dict, Union
 from influxdb import InfluxDBClient
 
-logger = logging.getLogger(__name__)
 
 class DataGetter:
     setting_file = "/db_settings.json"
@@ -29,6 +29,8 @@ class DataGetter:
         with open(path, "r") as f:
             self.settings = json.load(f)
 
+        logger.info("Conneting to the DB on [{host}:{port}] for the database [{database}]".format(**self.settings))
+        
         # Create the client passing the settings as kwargs
         self.client = InfluxDBClient(**self.settings)
 

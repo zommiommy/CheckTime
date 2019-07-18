@@ -4,8 +4,8 @@ import re
 import logging
 from time import time
 from datetime import datetime
+from logger import logger
 
-logger = logging.getLogger(__name__)
 
 epoch_to_iso = lambda x: datetime.fromtimestamp(x).strftime("%Y-%m-%dT%H:%M:%SZ")
 
@@ -15,7 +15,7 @@ rfc3339_pattern = re.compile(r"(.+?)\.(\d+)Z")
 time_pattern = re.compile(r"(\d+w)?(\d+d)?(\d+h)?(\d+m)?(\d+.?\d*s)?")
     
     
-def rfc3339_to_epoch(string) -> float:
+def rfc3339_to_epoch(string):
     date, ns = re.findall(rfc3339_pattern, string)[0]
     dt = datetime.strptime(date, '%Y-%m-%dT%H:%M:%S')
     return dt.timestamp() + float("0." + ns)

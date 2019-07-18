@@ -1,19 +1,17 @@
 # CheckTime is a free software developed by Tommaso Fontana for Wurth Phoenix S.r.l. under GPL-2 License.
 
-import logging
 import numpy as np
+from logger import logger
 from main import MainClass
-
-logger = logging.getLogger(__name__)
 
 class WinScript(MainClass):
 
     def __init__(self):
         super(WinScript, self).__init__()
         os_depenat_required = self.parser.add_argument_group('os dependant settings (required) Windows')
-        os_depenat_optional = self.parser.add_argument_group('os dependant settings (optional) Windows')
         os_depenat_required.add_argument("-H", "--host",    help="host which disks will be checked.", type=str, required=True)
         os_depenat_required.add_argument("-s", "--service", help="service to be checked.",            type=str, required=True)
+        os_depenat_optional = self.parser.add_argument_group('os dependant settings (optional) Windows')
         os_depenat_optional.add_argument("-m", "--metric", help="metric to be checked.", type=str, action="append", default=[])
         os_depenat_optional.add_argument("-e", "--exclude", help="metric to be excluded from the analysis.", type=str, action="append", default=[])
 
