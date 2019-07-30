@@ -93,7 +93,7 @@ class MainClass:
         raise  NotImplemnetedError("This metod is ment to be overwritten by subclasses")
 
     def convert_types(self, data):
-        data["time"] = [rfc3339_to_epoch(x) for x in data["time"]]
+        data["time"] = [parse_time_to_epoch(x) for x in data["time"]]
         for field in self.query["fields"]:
             data[field] = [float(x) if type(x) == str and x.isnumeric() else x for x in data[field] ]
         return data
@@ -119,11 +119,11 @@ class MainClass:
 
     def exit(self):
         # Critical case
-        if any(t < self.critical_threshold for t in self.predicted_times):
+        if any(t < self.critical_threshold for t in self.predicted_times if t != "inf"):
             logger.error("Critical theshold failed!")
             sys.exit(2)
         # Warning case
-        elif any(t < self.warning_threshold for t in self.predicted_times):
+        elif any(t < self.warning_threshold for t in self.predicted_times if t != "inf"):
             logger.warning("Warning theshold failed!")
             sys.exit(1)
         # Metric no found

@@ -14,6 +14,17 @@ iso_to_epoch = lambda x: datetime.fromisoformat(x).timestamp()
 rfc3339_pattern = re.compile(r"(.+?)\.(\d+)Z")
 time_pattern = re.compile(r"(\d+w)?(\d+d)?(\d+h)?(\d+m)?(\d+.?\d*s)?")
     
+
+def parse_time_to_epoch(string):
+    if re.match(rfc3339_pattern, string):
+        return rfc3339_to_epoch(string)
+    if re.match(time_pattern, string):
+        return time_to_epoch(string)
+    if string.isnumeric():
+        return int(string)
+    
+    logger.error("Can't decode the time format [%s]"%string)
+    sys.exit(1)
     
 def rfc3339_to_epoch(string):
     founds = re.findall(rfc3339_pattern, string)
@@ -24,6 +35,9 @@ def rfc3339_to_epoch(string):
     return dt.timestamp() + float("0." + ns)
 
 def epoch_to_time(epoch):
+    if epoch == "inf":
+        return "inf"
+
     weeks,  epoch = divmod(epoch, (7 * 24 * 60 * 60))
     days,   epoch = divmod(epoch, (24 * 60 * 60))
     hours,  epoch = divmod(epoch, (60 * 60))
