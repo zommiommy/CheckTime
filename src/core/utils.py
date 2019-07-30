@@ -1,10 +1,10 @@
 # CheckTime is a free software developed by Tommaso Fontana for Wurth Phoenix S.r.l. under GPL-2 License.
 
 import re
-import logging
 from time import time
 from datetime import datetime
-from logger import logger
+
+from core.logger import logger
 
 
 epoch_to_iso = lambda x: datetime.fromtimestamp(x).strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -16,7 +16,10 @@ time_pattern = re.compile(r"(\d+w)?(\d+d)?(\d+h)?(\d+m)?(\d+.?\d*s)?")
     
     
 def rfc3339_to_epoch(string):
-    date, ns = re.findall(rfc3339_pattern, string)[0]
+    founds = re.findall(rfc3339_pattern, string)
+    if len(founds) <= 0:
+        return string
+    date, ns = founds[0]
     dt = datetime.strptime(date, '%Y-%m-%dT%H:%M:%S')
     return dt.timestamp() + float("0." + ns)
 

@@ -1,9 +1,8 @@
 # CheckTime is a free software developed by Tommaso Fontana for Wurth Phoenix S.r.l. under GPL-2 License.
 
-import logging
 import numpy as np
-from logger import logger
-from main import MainClass
+from core import logger
+from core import MainClass
 
 
 class LinuxScript(MainClass):
@@ -21,7 +20,7 @@ class LinuxScript(MainClass):
         return {
             "measurement":self.args.measurement,
             "selectors":{
-                "host":self.args.host,
+                "hostname":self.args.host,
                 "device":self.args.device
                 },
             "optionals":{

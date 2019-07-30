@@ -5,11 +5,11 @@ import sys
 import json
 import logging
 import numpy as np
-from cacher import cacher
-from logger import logger
 from typing import List, Tuple, Dict, Union
 from influxdb import InfluxDBClient
 
+from core.cacher import cacher
+from core.logger import logger
 
 class DataGetter:
     setting_file = "/db_settings.json"
@@ -20,7 +20,7 @@ class DataGetter:
         self.measurement = query["measurement"]
 
         # Get the current folder
-        current_script_dir = "/".join(__file__.split("/")[:-2])
+        current_script_dir = "/".join(__file__.split("/")[:-3])
         
         path = current_script_dir + self.setting_file
         logger.info("Loading the DB settings from [%s]"%path)
@@ -36,7 +36,8 @@ class DataGetter:
 
     def __del__(self):
         """On exit / delation close the client connetion"""
-        self.client.close()
+        if "client" in dir(self):
+            self.client.close()
 
     @cacher
     def exec_query(self, query : str):
@@ -75,7 +76,7 @@ class DataGetter:
         
         # Construct the query to workaround the tags distinct constraint
         time = self.query["time"]
-        query = """SELECT distinct("{name}") FROM (SELECT * FROM {self.measurement} {where} {time})""".format(**locals())
+        query = """SELECT distinct("{name}") FROM (SELECT * FROM "{self.measurement}" {where} {time})""".format(**locals())
         r = self.exec_query(query)
         return [x["distinct"] for x in list(r)]
 
@@ -139,7 +140,7 @@ class DataGetter:
 
     def get_data(self):
         """Read the data from the DB and return it as (x, y) where x is the time and y is the percentual disk usage"""
-        if not self.validate_query():
+        if not self.query["validate_queries"] and not self.validate_query():
             return None
 
         optionals =[v for v in self.query["optionals"].keys()]
@@ -151,4 +152,9 @@ class DataGetter:
         logger.info("Gathering the data for the analysis.")
         query = """SELECT {fields} FROM (SELECT * FROM "{measurement}" {where} {time})""".format(**locals())
         results = self.exec_query(query)
+        if len(results) == 0:
+            logger.error("The query results it's empty!")
+            sys.exit(1)
+        else:
+            logger.info("The query result have %d records"%len(results))
         return results

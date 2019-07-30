@@ -5,10 +5,10 @@ import logging
 import argparse
 from typing import Dict, Union, List
 
-from logger import logger, setLevel
-from data_getter import DataGetter
-from predict_time import predict_time_left
-from utils import transpose, rfc3339_to_epoch, time_to_epoch, epoch_to_time, Timer
+from core.logger import logger, setLevel
+from core.data_getter import DataGetter
+from core.predict_time import predict_time_left
+from core.utils import transpose, rfc3339_to_epoch, time_to_epoch, epoch_to_time, Timer
 
 
 
@@ -39,6 +39,7 @@ class MainClass:
         self.parser = MyParser(description=self.copyrights)
 
         query_settings_r = self.parser.add_argument_group('query settings (required)')
+        query_settings_r.add_argument("-vq", '--validate-queries', type=int, choices=[0,1], default=1, help="Before executing the query, check that each single field of the query exists on the DB, 0 == do not check, 1 == check,  by defaults it check.")
         query_settings_r.add_argument("-M", "--measurement",    help="measurement where the data will be queried.", type=str, required=True)
 
         thresholds_settings = self.parser.add_argument_group('thresholds settings')
@@ -48,7 +49,8 @@ class MainClass:
 
         verbosity_settings= self.parser.add_argument_group('verbosity settings (optional)')
         verbosity_settings.add_argument("-v", "--verbosity", help="set the logging verbosity, 0 == CRITICAL, 1 == INFO, it defaults to ERROR.",  type=int, choices=[0,1], default=0)
-       
+
+    
     def parse_arguments(self):
         self.args = self.parser.parse_args()
         self.warning_threshold  = check_overflow(time_to_epoch(self.args.warning_threshold))
@@ -135,11 +137,20 @@ class MainClass:
 
     def run(self):
         with Timer("The total runtime was {time}s"):
+            # Parsing
             self.parse_arguments()
+            # Check the args
             self.set_verbosity()
             self.validate_args()
+            # Create the Query
+                # OS specific part
             self.query = self.construct_query()
+                # General part
             self.add_time_to_query()
+            self.query["validate_queries"] = self.args.validate_queries == 1
+            # Get the data
             self.data = self.get_data()
+            # Predict
             self.predicted_times = [self.predict(option, subvalue) for option, values in self.query["optionals"].items() for subvalue in values]
+            # Exit accordingly
             self.exit()

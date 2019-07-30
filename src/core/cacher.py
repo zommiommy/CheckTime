@@ -6,7 +6,7 @@ import json
 import logging
 from functools import lru_cache
 
-from logger import logger
+from core.logger import logger
 
 # TODO make a good cacher decorator to cache the queries
 # TODO add cache persistency
