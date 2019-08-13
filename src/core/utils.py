@@ -16,10 +16,10 @@ time_pattern = re.compile(r"(\d+w)?(\d+d)?(\d+h)?(\d+m)?(\d+.?\d*s)?")
     
 
 def parse_time_to_epoch(string):
-    if re.match(rfc3339_pattern, string):
-        return rfc3339_to_epoch(string)
     if re.match(time_pattern, string):
         return time_to_epoch(string)
+    if re.match(rfc3339_pattern, string):
+        return rfc3339_to_epoch(string)
     if string.isnumeric():
         return int(string)
     

@@ -8,7 +8,7 @@ from typing import Dict, Union, List
 from core.logger import logger, setLevel
 from core.data_getter import DataGetter
 from core.predict_time import predict_time_left
-from core.utils import transpose, rfc3339_to_epoch, time_to_epoch, epoch_to_time, Timer
+from core.utils import transpose, rfc3339_to_epoch, parse_time_to_epoch, time_to_epoch, epoch_to_time, Timer
 
 
 
