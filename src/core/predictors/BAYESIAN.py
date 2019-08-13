@@ -8,5 +8,5 @@ from sklearn.linear_model import BayesianRidge
 def BAYESIAN(x : np.ndarray, y : np.ndarray) -> Tuple[int, int]:
     clf = BayesianRidge()
     clf.fit(x, y)
-    m, q = reg.coef_[0], reg.intercept_z
+    m, q = clf.coef_[0], clf.intercept_
     return m, q
