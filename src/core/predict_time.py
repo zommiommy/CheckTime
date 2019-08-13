@@ -7,7 +7,7 @@ from core.utils import Timer
 from core.logger import logger
 from core.predictors import *
 
-def predict_time_left(x : np.ndarray, y : np.ndarray, name : str, mode : str = "OLS") -> int:
+def predict_time_left(x : np.ndarray, y : np.ndarray, name : str, mode : str = "BAYESIAN") -> int:
     functions = {
         "OLS":OLS,
         "RANSAC":RANSAC,
