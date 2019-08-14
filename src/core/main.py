@@ -111,7 +111,7 @@ class MainClass:
         elif delta not in [None,"inf"] and  delta < self.warning_threshold:
             print(f"WARNING: {subvalue} {delta_formatted}")
         else:
-            print(f"{subvalue} {delta_formatted}")
+            print(f"OK: {subvalue} {delta_formatted}")
 
         return delta
 
