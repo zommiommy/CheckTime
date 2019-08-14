@@ -106,9 +106,9 @@ class MainClass:
         delta = predict_time_left(x, y, subvalue)
         delta_formatted = epoch_to_time(delta)
 
-        if delta < self.critical_threshold:
+        if delta != "inf" and delta < self.critical_threshold:
             print(f"CRITICAL: {subvalue} {delta_formatted}")
-        elif delta < self.warning_threshold:
+        elif delta != "inf" and  delta < self.warning_threshold:
             print(f"WARNING: {subvalue} {delta_formatted}")
         else:
             print(f"{subvalue} {delta_formatted}")
