@@ -25,7 +25,7 @@ class MyParser(argparse.ArgumentParser):
 def check_overflow(epoch, _max = 2**32 - 1):
     """ IF the epoch overflow, influx wants a INF"""
     if epoch > _max:
-        logger.info("The value {epoch} is bigger than {_max} so it was capped to it to prevent Influx duration Overflow Error".format(**locals()))
+        logger.info(f"The value {epoch} is bigger than {_max} so it was capped to it to prevent Influx duration Overflow Error")
         return _max
     return epoch
 
@@ -99,13 +99,20 @@ class MainClass:
         return data
 
     def predict(self, option, subvalue):
-        logger.info("Analyzing the metric: [{option}] with value [{subvalue}]".format(**locals()))
+        logger.info(f"Analyzing the metric: [{option}] with value [{subvalue}]")
         data = transpose([x for x in self.data if x[option] == subvalue])
         data = self.convert_types(data)
         x, y = self.parse_data(data)
         delta = predict_time_left(x, y, subvalue)
         delta_formatted = epoch_to_time(delta)
-        print("{subvalue} {delta_formatted}".format(**locals()))
+
+        if delta < self.critical_threshold:
+            print(f"CRITICAL: {subvalue} {delta_formatted}")
+        elif delta < self.warning_threshold:
+            print(f"WARNING: {subvalue} {delta_formatted}")
+        else:
+            print(f"{subvalue} {delta_formatted}")
+
         return delta
 
     def parse_data(self, x, y, name):
