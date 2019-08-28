@@ -158,12 +158,29 @@ net_eye3        time, host, service, performanceLabel, value, max
 net_eye4        time, hostname, service, metric, value, max
 ```
 
+### Executable
+In order to execute the script it must follow the syntax:
+```
+python frontend.py 
+```
+And then adding the arguments after.
+
+If the installation must be contained in the folder an useful trick is an executable bash script which find his current path (saved in the DIR variable) and then call the correct environment an script from there. 
+
+e.g.
+```Bash
+#!/bin/bash
+DIR=$(dirname "$(python -c "import os,sys; print(os.path.realpath(sys.argv[1]))" $0)")
+$DIR/../check_time_env/bin/python $DIR/../src/linux.py "$@"
+```
+
 ### Custom Frontend
 A frontend is just a class that extend ```MainClass``` from the package core.
 
 The frontend will have to to 4 things:
 
 Create a constructor where the schema-specific argument will be passed to the script. Once called constructor of the father class there will be the attribute ```self.parser``` which is the parser from the module ```ArgParse```.
+
 e.g.
 ```python
     def __init__(self):
@@ -177,6 +194,7 @@ e.g.
 ```
 
 Then it must override the method ```construct_query``` that must return a dictionary:
+
 e.g.
 ```python
     def construct_query(self):
@@ -216,6 +234,7 @@ e.g.
 ```
 
 Finally to run the script must execute the run method of the class.
+
 e.g.
 ```python
 if __name__ == "__main__":
