@@ -45,15 +45,15 @@ def epoch_to_time(epoch):
     
     out = ""
     if weeks:
-        out += "{weeks}w".format(**locals())
+        out += f"{int(weeks)}w"
     if days:
-        out += "{days}d".format(**locals())
+        out += f"{int(days)}d"
     if hours:
-        out += "{hours}h".format(**locals())
+        out += f"{int(hours)}h"
     if mins:
-        out += "{mins}m".format(**locals())
+        out += f"{int(mins)}m"
     if sec:
-        out += "{sec:6f}s".format(**locals())
+        out += f"{sec:.2f}s"
     return out
     
 def time_to_epoch(time):
