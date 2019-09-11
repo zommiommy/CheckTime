@@ -24,7 +24,7 @@ class WinScript(MainClass):
                 },
             "optionals":{
                 "performanceLabel":{
-                    "values":self.args.metric,
+                    "values":self.args.performance_label,
                     "blacklist":self.args.exclude
                     }
                 },
