@@ -11,4 +11,4 @@ def RANSAC(x : np.ndarray, y : np.ndarray) -> Tuple[int, int]:
     ransac.fit(x, y)
     m = ransac.estimator_.coef_[0]
     q = ransac.estimator_.intercept_
-    return m, q
+    return m, q, 1

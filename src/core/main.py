@@ -107,7 +107,7 @@ class MainClass:
         data = transpose([x for x in self.data if x[option] == subvalue])
         data = self.convert_types(data)
         x, y = self.parse_data(data)
-        delta = predict_time_left(x, y, subvalue)
+        delta, std = predict_time_left(x, y, subvalue)
         delta_formatted = epoch_to_time(delta)
 
         if delta not in [None,"inf"] and delta < self.critical_threshold:
@@ -117,7 +117,7 @@ class MainClass:
         else:
             classification = "OK"
         
-        return delta, classification, subvalue, delta_formatted
+        return delta, std, classification, subvalue, delta_formatted
 
     def parse_data(self, x, y, name):
         raise  NotImplemnetedError("This metod is ment to be overwritten by subclasses")
@@ -129,10 +129,10 @@ class MainClass:
         self.query.update({"time":time})
 
     def print_results(self):
-        self.predicted_times.sort(key=lambda x: classification_order[x[1]], reverse=True)
+        self.predicted_times.sort(key=lambda x: classification_order[x[2]], reverse=True)
 
-        for time, classification, sub_value, delta_formatted in self.predicted_times:
-            print(f"{classification}: {sub_value} {delta_formatted}")
+        for time, std, classification, sub_value, delta_formatted in self.predicted_times:
+            print(f"{classification}: {sub_value} {delta_formatted} (±{epoch_to_time(std)})")
 
     def exit(self):
         times = [t[0] for t in self.predicted_times]
