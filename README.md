@@ -144,6 +144,15 @@ Therefore an example of usage might be:
 checktime-win -v 1 -M disk -n 10000w -w 10w -c 5w -H my.host.com -s Diskspace -m Win
 ```
 
+The output will be like:
+```
+CRITICAL: 1s /etc
+WARNING: 1m /var
+OK: 1d4s /tmp
+```
+
+And the exit code is 0 if everything is OK, 1 if there are WARNINGs and finally 2 if there are CRITICALs.
+
 ### Frontends
 The script have a core class which is extended by a few frontends which job is to handle the difference in the schemas of the various measurements.
 

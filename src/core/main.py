@@ -10,7 +10,11 @@ from core.data_getter import DataGetter
 from core.predict_time import predict_time_left
 from core.utils import transpose, rfc3339_to_epoch, parse_time_to_epoch, time_to_epoch, epoch_to_time, Timer
 
-
+classification_order = {
+    "OK":0,
+    "WARNING":1,
+    "CRITICAL":2
+}
 
 class MyParser(argparse.ArgumentParser):
     """Custom parser to ensure that the exit code on error is 1
@@ -107,13 +111,13 @@ class MainClass:
         delta_formatted = epoch_to_time(delta)
 
         if delta not in [None,"inf"] and delta < self.critical_threshold:
-            print(f"CRITICAL: {subvalue} {delta_formatted}")
+            classification = "CRITICAL"
         elif delta not in [None,"inf"] and  delta < self.warning_threshold:
-            print(f"WARNING: {subvalue} {delta_formatted}")
+            classification = "WARNING"
         else:
-            print(f"OK: {subvalue} {delta_formatted}")
-
-        return delta
+            classification = "OK"
+        
+        return delta, classification, subvalue, delta_formatted
 
     def parse_data(self, x, y, name):
         raise  NotImplemnetedError("This metod is ment to be overwritten by subclasses")
@@ -124,17 +128,25 @@ class MainClass:
         time = """time > now() - {}s""".format(check_overflow(time_to_epoch(self.args.window)))
         self.query.update({"time":time})
 
+    def print_results(self):
+        self.predicted_times.sort(key=lambda x: classification_order[x[1]], reverse=True)
+
+        for time, classification, sub_value, delta_formatted in self.predicted_times:
+            print(f"{classification}: {sub_value} {delta_formatted}")
+
     def exit(self):
+        times = [t[0] for t in self.predicted_times]
+
         # Critical case
-        if any(t < self.critical_threshold for t in self.predicted_times if t != "inf"):
+        if any(t < self.critical_threshold for t in times if t != "inf"):
             logger.error("Critical theshold failed!")
             sys.exit(2)
         # Warning case
-        elif any(t < self.warning_threshold for t in self.predicted_times if t != "inf"):
+        elif any(t < self.warning_threshold for t in times if t != "inf"):
             logger.warning("Warning theshold failed!")
             sys.exit(1)
         # Metric no found
-        elif any(t == None for t in self.predicted_times):
+        elif any(t == None for t in times):
             logger.warning("Some metrics were not found!")
             sys.exit(1)
         # Normal case
@@ -159,5 +171,6 @@ class MainClass:
             self.data = self.get_data()
             # Predict
             self.predicted_times = [self.predict(option, subvalue) for option, values in self.query["optionals"].items() for subvalue in values]
+            self.print_results()
             # Exit accordingly
             self.exit()
