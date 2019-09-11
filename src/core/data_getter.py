@@ -76,9 +76,9 @@ class DataGetter:
         
         # Construct the query to workaround the tags distinct constraint
         time = self.query["time"]
-        query = """SELECT "{name}" as values FROM (SELECT * FROM "{self.measurement}" {where} {time})""".format(**locals())
+        query = """SELECT "{name}" as value FROM (SELECT * FROM "{self.measurement}" {where} {time})""".format(**locals())
         r = self.exec_query(query)
-        return list({x["values"] for x in list(r)})
+        return list({x["value"] for x in list(r)})
 
     @cacher
     def get_measurements(self) -> List[str]:
