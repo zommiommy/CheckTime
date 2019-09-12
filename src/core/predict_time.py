@@ -24,10 +24,10 @@ def predict_time_left(x : np.ndarray, y : np.ndarray, name : str, mode : str = "
             logger.info("The coefficents predicted are m [{m}] q[{q}]".format(**locals()))
         if m <= 0:
             logger.info("The predicted line is not growing so it will never reach the max")
-            return "inf"
+            return "inf", p
         time_predicted = (1 - q)/m
         delta = time_predicted - x[-1]
         return delta[0], p
     logger.error("Mode [%s] not found, the available ones are %s"%(mode, functions.keys()))
-    return None
+    return None, 0
 

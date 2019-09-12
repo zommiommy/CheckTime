@@ -132,7 +132,10 @@ class MainClass:
         self.predicted_times.sort(key=lambda x: classification_order[x[2]], reverse=True)
 
         for time, p, classification, sub_value, delta_formatted in self.predicted_times:
-            print(f"{classification}: {sub_value} {delta_formatted} ({100*p:.2f}%)")
+            if np.isnan(p):
+                print(f"{classification}: {sub_value} {delta_formatted}")
+            else:
+                print(f"{classification}: {sub_value} {delta_formatted} ({100*p:.2f}%)")
 
     def exit(self):
         times = [t[0] for t in self.predicted_times]
