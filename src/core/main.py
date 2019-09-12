@@ -3,7 +3,11 @@
 import sys
 import logging
 import argparse
+import numpy as np
 from typing import Dict, Union, List
+
+import warnings
+warnings.filterwarnings("ignore")
 
 from core.logger import logger, setLevel
 from core.data_getter import DataGetter
