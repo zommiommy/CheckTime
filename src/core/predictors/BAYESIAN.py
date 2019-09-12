@@ -13,5 +13,5 @@ def BAYESIAN(x : np.ndarray, y : np.ndarray) -> Tuple[int, int]:
     mean = clf.predict(y.reshape(-1, 1))
     # This it's not an actual probability but it should be interpretable as one.
     print(stats.summary(clf, x, y.reshape(y.size)))
-    p = np.nanmean(stats.coef_pval(clf, x, y))
+    p = 1 - np.nanmean(stats.coef_pval(clf, x, y))
     return m, q, p
