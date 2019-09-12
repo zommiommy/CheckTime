@@ -94,7 +94,7 @@ class MainClass:
         return dg.get_data()
 
     def construct_query(self):
-        raise  NotImplemnetedError("This metod is ment to be overwritten by subclasses")
+        raise  NotImplemnetedError("This method is ment to be overwritten by subclasses")
 
     def convert_types(self, data):
         data["time"] = [parse_time_to_epoch(x) for x in data["time"]]
@@ -107,7 +107,7 @@ class MainClass:
         data = transpose([x for x in self.data if x[option] == subvalue])
         data = self.convert_types(data)
         x, y = self.parse_data(data)
-        delta, std = predict_time_left(x, y, subvalue)
+        delta, p = predict_time_left(x, y, subvalue)
         delta_formatted = epoch_to_time(delta)
 
         if delta not in [None,"inf"] and delta < self.critical_threshold:
@@ -117,10 +117,10 @@ class MainClass:
         else:
             classification = "OK"
         
-        return delta, std, classification, subvalue, delta_formatted
+        return delta, p, classification, subvalue, delta_formatted
 
     def parse_data(self, x, y, name):
-        raise  NotImplemnetedError("This metod is ment to be overwritten by subclasses")
+        raise  NotImplemnetedError("This method is ment to be overwritten by subclasses")
         # This just save the need to import files on the two frontends
 
     def add_time_to_query(self):
@@ -131,8 +131,8 @@ class MainClass:
     def print_results(self):
         self.predicted_times.sort(key=lambda x: classification_order[x[2]], reverse=True)
 
-        for time, std, classification, sub_value, delta_formatted in self.predicted_times:
-            print(f"{classification}: {sub_value} {delta_formatted} (±{epoch_to_time(std)})")
+        for time, p, classification, sub_value, delta_formatted in self.predicted_times:
+            print(f"{classification}: {sub_value} {delta_formatted} ({100*p:.2f}%)")
 
     def exit(self):
         times = [t[0] for t in self.predicted_times]
