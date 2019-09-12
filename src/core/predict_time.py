@@ -24,7 +24,7 @@ def predict_time_left(x : np.ndarray, y : np.ndarray, name : str, mode : str = "
         with Timer("The prediction took {time}s"):
             m, q, p =  functions[mode](x, y)
             logger.info("The coefficents predicted are m [{m}] q[{q}]".format(**locals()))
-        if m <= MAX_TIME:
+        if m <= 0:
             logger.info("The predicted line is not growing so it will never reach the max")
             return "inf", p
         time_predicted = (1 - q)/m
