@@ -78,7 +78,7 @@ class DataGetter:
         time = self.query["time"]
         query = """SELECT "{name}" as value FROM (SELECT * FROM "{self.measurement}" {where} {time})""".format(**locals())
         r = self.exec_query(query)
-        return list({x["value"] for x in list(r)})
+        return list({x["value"] for x in list(r) if x["value"]})
 
     @cacher
     def get_measurements(self) -> List[str]:
