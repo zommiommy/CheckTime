@@ -42,6 +42,7 @@ class DataGetter:
     @cacher
     def exec_query(self, query : str):
         # Construct the query to workaround the tags distinct constraint
+        query = query.replace("\\", "\\\\")
         logger.info("Executing query [%s]"%query)
         return list(self.client.query(query).get_points())
 
