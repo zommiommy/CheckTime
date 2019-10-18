@@ -34,8 +34,8 @@ class WinScript(MainClass):
 
     def parse_data(self, data):
         x = np.array(data["time"])
-        y = np.array(data["value"]) / 100
-        return x, y
+        y = np.array(data["value"])
+        return x, y, [None]
 
 
 

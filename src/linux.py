@@ -37,7 +37,7 @@ class LinuxScript(MainClass):
         free = np.array(data["free"])
         total = np.array(data["total"])
         y = 1 - (free / total)
-        return x, y
+        return x, y, [None]
 
 
 

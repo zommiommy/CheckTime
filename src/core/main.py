@@ -1,5 +1,6 @@
 # CheckTime is a free software developed by Tommaso Fontana for Wurth Phoenix S.r.l. under GPL-2 License.
 
+import os
 import sys
 import logging
 import argparse
@@ -106,11 +107,27 @@ class MainClass:
             data[field] = [float(x) if type(x) == str and x.isnumeric() else x for x in data[field] ]
         return data
 
+    def normalize_data(self, x, y, _max):
+        if None not in _max:
+            logger.info("Normalizing data by divinding value by max")
+            return x, y / _max
+        else:
+            logger.info("The max values contains at least one None")
+            if (0 <= y).all() and (y <= 1).all():
+                logger.info("Assuming the values are already percentages since they are in the range [0,1]")
+                return x, y
+            elif (0 <= y).all() and (y <= 100).all():
+                logger.info("Assuming the values are already percentages since they are in the range [0,1]")
+                return x, y / 100
+        logger.error("The max field contains Nones and the values are non interpretable as percentages")
+        os.exit(1)
+
     def predict(self, option, subvalue):
         logger.info(f"Analyzing the metric: [{option}] with value [{subvalue}]")
         data = transpose([x for x in self.data if x[option] == subvalue])
         data = self.convert_types(data)
-        x, y = self.parse_data(data)
+        x, y, _max = self.parse_data(data)
+        x, y = self.normalize_data(x, y, _max)
         delta, p = predict_time_left(x, y, subvalue)
         delta_formatted = epoch_to_time(delta)
 

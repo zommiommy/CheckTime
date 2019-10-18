@@ -36,8 +36,7 @@ class WinScript(MainClass):
         x = np.array(data["time"])
         value = np.array(data["value"])
         _max = np.array(data["max"])
-        y = value / _max
-        return x, y
+        return x, value, _max
 
 
 
