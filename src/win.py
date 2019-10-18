@@ -12,7 +12,7 @@ class WinScript(MainClass):
         os_depenat_required.add_argument("-H", "--host",    help="host which disks will be checked.", type=str, required=True)
         os_depenat_required.add_argument("-s", "--service", help="service to be checked.",            type=str, required=True)
         os_depenat_optional = self.parser.add_argument_group('os dependant settings (optional) Windows')
-        os_depenat_optional.add_argument("-m", "--matric", help="metric to be checked.", type=str, action="append", default=[])
+        os_depenat_optional.add_argument("-m", "--metric", help="metric to be checked.", type=str, action="append", default=[])
         os_depenat_optional.add_argument("-e", "--exclude", help="metric to be excluded from the analysis.", type=str, action="append", default=[])
 
     def construct_query(self):
@@ -23,8 +23,8 @@ class WinScript(MainClass):
                 "service":self.args.service
                 },
             "optionals":{
-                "matric":{
-                    "values":self.args.matric,
+                "metric":{
+                    "values":self.args.metric,
                     "blacklist":self.args.exclude
                     }
                 },
