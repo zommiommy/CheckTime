@@ -159,11 +159,13 @@ class MainClass:
                 print(f"{classification}: {sub_value} {delta_formatted} ({100*p:.2f}%)")
 
     def exit(self):
+        logger.info(f"Warning threshold [{self.warning_threshold}]")
+        logger.info(f"Critical threshold [{self.critical_threshold}]")
         times = [t[0] for t in self.predicted_times]
 
         # Critical case
         if any(t < self.critical_threshold for t in times if t != "inf"):
-            logger.error("Critical theshold failed!")
+            logger.critical("Critical theshold failed!")
             sys.exit(2)
         # Warning case
         elif any(t < self.warning_threshold for t in times if t != "inf"):
