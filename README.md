@@ -162,6 +162,7 @@ name            Schema expected
 ----            ---------------
 linux           time, hostname, device, path, free, total
 win             time, hostname, service, metric, value, max
+win_free        time, hostname, service, metric, value, max
 win_percentage  time, hostname, service, metric, value, max
 net_eye3        time, host, service, performanceLabel, value, max
 net_eye4        time, hostname, service, metric, value, max

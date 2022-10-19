@@ -1,8 +1,9 @@
 # Byte-compiled / optimized / DLL files
-__pycache__/
+__pycache__
 *.py[cod]
 *$py.class
 
+*.pyc
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
