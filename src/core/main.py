@@ -84,6 +84,7 @@ class MainClass:
             
             if not values:
                 values = dg.get_available(name)
+                logger.info(f"The metrics available are  [{values}]")
                 
             filtered_values = [v for v in values if v not in blacklist]
             
